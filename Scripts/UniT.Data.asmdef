@@ -1,0 +1,50 @@
+{
+  "name": "UniT.Data",
+  "rootNamespace": "UniT.Data",
+  "references": [
+    "UniT.Extensions",
+    "UniT.Logging",
+    "UniT.ResourceManagement",
+    "UniT.FbInstant",
+    "UniT.DI",
+    "Zenject",
+    "UniTask"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.frostbun.unit.di",
+      "expression": "",
+      "define": "UNIT_DI"
+    },
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "UNIT_ZENJECT"
+    },
+    {
+      "name": "com.cysharp.unitask",
+      "expression": "",
+      "define": "UNIT_UNITASK"
+    },
+    {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "expression": "",
+      "define": "UNIT_JSON"
+    },
+    {
+      "name": "org.nuget.csvhelper",
+      "expression": "",
+      "define": "UNIT_CSV"
+    },
+    {
+      "name": "com.frostbun.unit.resourcemanagement",
+      "expression": "",
+      "define": "UNIT_RESOURCEMANAGEMENT"
+    },
+    {
+      "name": "com.frostbun.unit.fbinstant",
+      "expression": "",
+      "define": "UNIT_FBINSTANT"
+    }
+  ]
+}

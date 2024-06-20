@@ -37,11 +37,6 @@
       "define": "UNIT_CSV"
     },
     {
-      "name": "com.frostbun.unit.resourcemanagement",
-      "expression": "",
-      "define": "UNIT_RESOURCEMANAGEMENT"
-    },
-    {
       "name": "com.frostbun.unit.fbinstant",
       "expression": "",
       "define": "UNIT_FBINSTANT"

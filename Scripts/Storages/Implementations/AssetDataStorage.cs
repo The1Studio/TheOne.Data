@@ -1,4 +1,3 @@
-#if UNIT_RESOURCEMANAGEMENT
 #nullable enable
 namespace UniT.Data.Storage
 {
@@ -139,4 +138,3 @@ namespace UniT.Data.Storage
         #endif
     }
 }
-#endif

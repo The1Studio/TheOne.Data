@@ -21,9 +21,11 @@ namespace UniT.Data.Serialization
                 || field.ToPropertyInfo()?.GetCustomAttribute<CsvIgnoreAttribute>() is { };
         }
 
-        public static IEnumerable<FieldInfo> GetCsvFields(this Type type)
+        public static (List<FieldInfo> NormalFields, List<FieldInfo> NestedFields) GetCsvFields(this Type type)
         {
-            return type.GetAllFields().Where(field => !field.IsCsvIgnored());
+            return type.GetAllFields()
+                .Where(field => !field.IsCsvIgnored())
+                .Split(field => !typeof(ICsvData).IsAssignableFrom(field.FieldType));
         }
     }
 }

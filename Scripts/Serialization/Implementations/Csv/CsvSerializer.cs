@@ -87,9 +87,12 @@ namespace UniT.Data.Serialization
 
         private sealed class Populator
         {
+            #region Constructor
+
             private readonly IConverterManager                                                 converterManager;
             private readonly ICsvData                                                          data;
             private readonly CsvReader                                                         reader;
+            private readonly Func<object>                                                      rowFactory;
             private readonly FieldInfo                                                         keyField;
             private readonly IReadOnlyDictionary<FieldInfo, (int Index, IConverter Converter)> normalFields;
             private readonly IReadOnlyList<FieldInfo>                                          nestedFields;
@@ -98,14 +101,29 @@ namespace UniT.Data.Serialization
 
             public Populator(IConverterManager converterManager, ICsvData data, CsvReader reader)
             {
+                #region Dependencies
+
                 this.converterManager = converterManager;
                 this.data             = data;
                 this.reader           = reader;
-                var rowType = data.RowType;
-                var (prefix, key) = rowType.GetCsvRow();
-                var csvFields = rowType.GetCsvFields().ToArray();
-                this.keyField                    = key.IsNullOrWhitespace() ? csvFields.First() : csvFields.First(field => field.Name == key);
-                var (normalFields, nestedFields) = csvFields.Split(field => !typeof(ICsvData).IsAssignableFrom(field.FieldType));
+
+                #endregion
+
+                #region Row Factory
+
+                var rowType     = data.RowType;
+                var constructor = rowType.GetSingleConstructor();
+                var parameters  = constructor.GetParameters();
+                if (parameters.Length > 0 && !parameters[0].HasDefaultValue) throw new InvalidOperationException($"No default constructor found for {rowType.Name}");
+                this.rowFactory = () => constructor.Invoke(parameters.Select(parameter => parameter.DefaultValue).ToArray());
+
+                #endregion
+
+                #region Fields
+
+                var (prefix, key)                = rowType.GetCsvRow();
+                var (normalFields, nestedFields) = rowType.GetCsvFields();
+                this.keyField                    = key.IsNullOrWhitespace() ? normalFields.First() : normalFields.First(field => field.Name == key);
                 this.normalFields = normalFields.ToDictionary(
                     field => field,
                     field =>
@@ -117,12 +135,16 @@ namespace UniT.Data.Serialization
                     }
                 );
                 this.nestedFields = nestedFields;
+
+                #endregion
             }
+
+            #endregion
 
             public void Populate()
             {
                 var keyValue = default(object);
-                var row      = Activator.CreateInstance(this.data.RowType);
+                var row      = this.rowFactory();
 
                 foreach (var (field, (index, converter)) in this.normalFields)
                 {
@@ -154,6 +176,8 @@ namespace UniT.Data.Serialization
 
         private sealed class Serializer
         {
+            #region Constructor
+
             private readonly IConverterManager                          converterManager;
             private readonly IEnumerator                                data;
             private readonly CsvWriter                                  writer;
@@ -172,7 +196,7 @@ namespace UniT.Data.Serialization
                 this.writer = writer;
                 var rowType = data.RowType;
                 var (prefix, _)                  = rowType.GetCsvRow();
-                var (normalFields, nestedFields) = rowType.GetCsvFields().Split(field => !typeof(ICsvData).IsAssignableFrom(field.FieldType));
+                var (normalFields, nestedFields) = rowType.GetCsvFields();
                 this.headers                     = normalFields.Select(field => field.GetCsvColumn(prefix)).ToArray();
                 this.normalFields = normalFields.ToDictionary(
                     field => field,
@@ -180,6 +204,8 @@ namespace UniT.Data.Serialization
                 );
                 this.nestedFields = nestedFields;
             }
+
+            #endregion
 
             public IEnumerable<string> GetHeaders()
             {

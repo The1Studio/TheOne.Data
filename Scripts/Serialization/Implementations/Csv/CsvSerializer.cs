@@ -111,11 +111,11 @@ namespace UniT.Data.Serialization
 
                 #region Row Factory
 
-                var rowType     = data.RowType;
-                var constructor = rowType.GetSingleConstructor();
-                var parameters  = constructor.GetParameters();
-                if (parameters.Length > 0 && !parameters[0].HasDefaultValue) throw new InvalidOperationException($"No default constructor found for {rowType.Name}");
-                this.rowFactory = () => constructor.Invoke(parameters.Select(parameter => parameter.DefaultValue).ToArray());
+                var rowType = data.RowType;
+                var constructor = rowType.GetConstructors().SingleOrDefault(constructor => constructor.GetParameters().All(parameter => parameter.HasDefaultValue))
+                    ?? rowType.GetSingleConstructor();
+                var parameters = constructor.GetParameters().Select(parameter => parameter.DefaultValue).ToArray();
+                this.rowFactory = () => constructor.Invoke(parameters);
 
                 #endregion
 

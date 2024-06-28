@@ -9,6 +9,8 @@ namespace UniT.Data
     using UniT.Data.Storage;
     using UniT.DI;
     using UniT.Extensions;
+    using UniT.Logging;
+    using UniT.ResourceManagement;
 
     public static class DIBinder
     {
@@ -20,6 +22,10 @@ namespace UniT.Data
             IEnumerable<Type>?       dataStorageTypes = null
         )
         {
+            if (container.Contains<IDataManager>()) return;
+            container.AddLoggerManager();
+            container.AddResourceManagers();
+
             dataTypes.ForEach(type =>
             {
                 if (!typeof(IData).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IData)}");

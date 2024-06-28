@@ -8,6 +8,8 @@ namespace UniT.Data
     using UniT.Data.Serialization;
     using UniT.Data.Storage;
     using UniT.Extensions;
+    using UniT.Logging;
+    using UniT.ResourceManagement;
     using Zenject;
 
     public static class ZenjectBinder
@@ -20,6 +22,10 @@ namespace UniT.Data
             IEnumerable<Type>? dataStorageTypes = null
         )
         {
+            if (container.HasBinding<IDataManager>()) return;
+            container.BindLoggerManager();
+            container.BindResourceManagers();
+
             dataTypes.ForEach(type =>
             {
                 if (!typeof(IData).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IData)}");

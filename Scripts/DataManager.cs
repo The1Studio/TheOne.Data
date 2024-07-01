@@ -302,18 +302,14 @@ namespace UniT.Data
 
         private IEnumerator PopulateAsync(IEnumerable<Type> types, Action? callback, IProgress<float>? progress)
         {
-            yield return types.GroupBy(type =>
-                {
-                    if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
-                    if (entry.Storage is not IReadableDataStorage) throw new InvalidOperationException($"{type.Name} not readable");
-                    return (entry.Serializer, entry.Storage);
-                })
-                .Select(LoadAsync)
-                .Gather();
-            progress?.Report(1);
-            callback?.Invoke();
+            return types.GroupBy(type =>
+            {
+                if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
+                if (entry.Storage is not IReadableDataStorage) throw new InvalidOperationException($"{type.Name} not readable");
+                return (entry.Serializer, entry.Storage);
+            }).ForEachAsync(LoadAsync, callback, progress);
 
-            IEnumerator LoadAsync(IGrouping<(ISerializer Serializer, IDataStorage Storage), Type> group)
+            IEnumerator LoadAsync(IGrouping<(ISerializer Serializer, IDataStorage Storage), Type> group, IProgress<float>? progress)
             {
                 var keys = group.Select(type => type.GetKey()).ToArray();
                 switch (group.Key)
@@ -322,32 +318,29 @@ namespace UniT.Data
                     {
                         var (serializer, storage) = ((IBinarySerializer, IReadableBinaryStorage))group.Key;
                         var rawDatas = default(byte[][])!;
-                        yield return storage.ReadAsync(keys, result => rawDatas = result);
+                        yield return storage.ReadAsync(keys, result => rawDatas = result, progress);
                         yield return IterTools.Zip(group, rawDatas)
-                            .Where((_,     rawData) => rawData.Length > 0)
-                            .Select((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData))
-                            .Gather();
+                            .Where((_,           rawData) => rawData.Length > 0)
+                            .ForEachAsync((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData));
                         break;
                     }
                     case (IStringSerializer, IReadableStringStorage):
                     {
                         var (serializer, storage) = ((IStringSerializer, IReadableStringStorage))group.Key;
                         var rawDatas = default(string[])!;
-                        yield return storage.ReadAsync(keys, result => rawDatas = result);
+                        yield return storage.ReadAsync(keys, result => rawDatas = result, progress);
                         yield return IterTools.Zip(group, rawDatas)
-                            .Where((_,     rawData) => rawData.Length > 0)
-                            .Select((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData))
-                            .Gather();
+                            .Where((_,           rawData) => rawData.Length > 0)
+                            .ForEachAsync((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData));
                         break;
                     }
                     case (IObjectSerializer, IReadableObjectStorage):
                     {
                         var (serializer, storage) = ((IObjectSerializer, IReadableObjectStorage))group.Key;
                         var rawDatas = default(object[])!;
-                        yield return storage.ReadAsync(keys, result => rawDatas = result);
+                        yield return storage.ReadAsync(keys, result => rawDatas = result, progress);
                         yield return IterTools.Zip(group, rawDatas)
-                            .Select((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData))
-                            .Gather();
+                            .ForEachAsync((type, rawData) => serializer.PopulateAsync(this.cache[type].Data, rawData));
                         break;
                     }
                     default: throw new InvalidOperationException();
@@ -358,18 +351,14 @@ namespace UniT.Data
 
         private IEnumerator SaveAsync(IEnumerable<Type> types, Action? callback, IProgress<float>? progress)
         {
-            yield return types.GroupBy(type =>
-                {
-                    if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
-                    if (entry.Storage is not IWritableDataStorage) throw new InvalidOperationException($"{type.Name} not writable");
-                    return (entry.Serializer, entry.Storage);
-                })
-                .Select(SaveAsync)
-                .Gather();
-            progress?.Report(1);
-            callback?.Invoke();
+            return types.GroupBy(type =>
+            {
+                if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
+                if (entry.Storage is not IWritableDataStorage) throw new InvalidOperationException($"{type.Name} not writable");
+                return (entry.Serializer, entry.Storage);
+            }).ForEachAsync(SaveAsync, callback, progress);
 
-            IEnumerator SaveAsync(IGrouping<(ISerializer Serializer, IDataStorage Storage), Type> group)
+            IEnumerator SaveAsync(IGrouping<(ISerializer Serializer, IDataStorage Storage), Type> group, IProgress<float>? progress)
             {
                 var keys = group.Select(type => type.GetKey()).ToArray();
                 switch (group.Key)
@@ -378,24 +367,24 @@ namespace UniT.Data
                     {
                         var (serializer, storage) = ((IBinarySerializer, IWritableBinaryStorage))group.Key;
                         var rawDatas = new Dictionary<Type, byte[]>();
-                        yield return group.Select(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result))).Gather();
-                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray());
+                        yield return group.ForEachAsync(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result)));
+                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray(), progress: progress);
                         break;
                     }
                     case (IStringSerializer, IWritableStringStorage):
                     {
                         var (serializer, storage) = ((IStringSerializer, IWritableStringStorage))group.Key;
                         var rawDatas = new Dictionary<Type, string>();
-                        yield return group.Select(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result))).Gather();
-                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray());
+                        yield return group.ForEachAsync(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result)));
+                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray(), progress: progress);
                         break;
                     }
                     case (IObjectSerializer, IWritableObjectStorage):
                     {
                         var (serializer, storage) = ((IObjectSerializer, IWritableObjectStorage))group.Key;
                         var rawDatas = new Dictionary<Type, object>();
-                        yield return group.Select(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result))).Gather();
-                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray());
+                        yield return group.ForEachAsync(type => serializer.SerializeAsync(this.cache[type].Data, result => rawDatas.Add(type, result)));
+                        yield return storage.WriteAsync(keys, group.Select(type => rawDatas[type]).ToArray(), progress: progress);
                         break;
                     }
                     default: throw new InvalidOperationException();
@@ -406,21 +395,17 @@ namespace UniT.Data
 
         private IEnumerator FlushAsync(IEnumerable<Type> types, Action? callback, IProgress<float>? progress)
         {
-            yield return types.GroupBy(type =>
-                {
-                    if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
-                    return entry.Storage as IWritableDataStorage ?? throw new InvalidOperationException($"{type.Name} not writable");
-                })
-                .Select(FlushAsync)
-                .Gather();
-            progress?.Report(1);
-            callback?.Invoke();
+            return types.GroupBy(type =>
+            {
+                if (!this.cache.TryGetValue(type, out var entry)) throw new InvalidOperationException($"{type.Name} not found");
+                return entry.Storage as IWritableDataStorage ?? throw new InvalidOperationException($"{type.Name} not writable");
+            }).ForEachAsync(FlushAsync, callback, progress);
 
-            IEnumerator FlushAsync(IGrouping<IWritableDataStorage, Type> group)
+            IEnumerator FlushAsync(IGrouping<IWritableDataStorage, Type> group, IProgress<float>? progress)
             {
                 var keys    = group.Select(type => type.GetKey()).ToArray();
                 var storage = group.Key;
-                yield return storage.FlushAsync();
+                yield return storage.FlushAsync(progress: progress);
                 this.logger.Debug($"Flushed {keys.Join(", ")}");
             }
         }

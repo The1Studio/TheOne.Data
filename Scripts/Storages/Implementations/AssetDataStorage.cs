@@ -13,7 +13,6 @@ namespace UniT.Data.Storage
     using Cysharp.Threading.Tasks;
     #else
     using System.Collections;
-    using System.Collections.Generic;
     #endif
 
     public sealed class AssetDataStorage : IReadableBinaryStorage, IReadableStringStorage, IReadableObjectStorage
@@ -103,37 +102,29 @@ namespace UniT.Data.Storage
         #else
         IEnumerator IReadableBinaryStorage.ReadAsync(string[] keys, Action<byte[][]> callback, IProgress<float>? progress)
         {
-            var rawDatas = new Dictionary<string, byte[]>();
-            yield return keys.Select(key => this.assetsManager.LoadAsync<TextAsset>(key, asset =>
-            {
-                rawDatas.Add(key, asset.bytes);
-                this.assetsManager.Unload(key);
-            })).Gather();
-            progress?.Report(1);
-            callback(keys.Select(key => rawDatas[key]).ToArray());
+            return keys.SelectAsync<string, byte[]>(
+                (key, callback, progress) => this.assetsManager.LoadAsync<TextAsset>(key, asset => callback(asset.bytes), progress),
+                rawDatas => callback(rawDatas.ToArray()),
+                progress
+            );
         }
 
         IEnumerator IReadableStringStorage.ReadAsync(string[] keys, Action<string[]> callback, IProgress<float>? progress)
         {
-            var rawDatas = new Dictionary<string, string>();
-            yield return keys.Select(key => this.assetsManager.LoadAsync<TextAsset>(key, asset =>
-            {
-                rawDatas.Add(key, asset.text);
-                this.assetsManager.Unload(key);
-            })).Gather();
-            progress?.Report(1);
-            callback(keys.Select(key => rawDatas[key]).ToArray());
+            return keys.SelectAsync<string, string>(
+                (key, callback, progress) => this.assetsManager.LoadAsync<TextAsset>(key, asset => callback(asset.text), progress),
+                rawDatas => callback(rawDatas.ToArray()),
+                progress
+            );
         }
 
         IEnumerator IReadableObjectStorage.ReadAsync(string[] keys, Action<object[]> callback, IProgress<float>? progress)
         {
-            var rawDatas = new Dictionary<string, object>();
-            yield return keys.Select(key => this.assetsManager.LoadAsync<Object>(key, asset =>
-            {
-                rawDatas.Add(key, asset);
-            })).Gather();
-            progress?.Report(1);
-            callback(keys.Select(key => rawDatas[key]).ToArray());
+            return keys.SelectAsync<string, object>(
+                this.assetsManager.LoadAsync<TextAsset>,
+                rawDatas => callback(rawDatas.ToArray()),
+                progress
+            );
         }
         #endif
     }

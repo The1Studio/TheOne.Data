@@ -7,22 +7,22 @@ namespace UniT.Data.Conversion
 
     public sealed class UInt32Converter : Converter<UInt32>
     {
-        private readonly NumberFormatInfo formatInfo;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public UInt32Converter(NumberFormatInfo? formatInfo = null)
+        public UInt32Converter(IFormatProvider? formatProvider = null)
         {
-            this.formatInfo = formatInfo ?? NumberFormatInfo.InvariantInfo;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return UInt32.Parse(str, this.formatInfo);
+            return UInt32.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((UInt32)obj).ToString(this.formatInfo);
+            return ((UInt32)obj).ToString(this.formatProvider);
         }
     }
 }

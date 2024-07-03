@@ -7,22 +7,22 @@ namespace UniT.Data.Conversion
 
     public sealed class SingleConverter : Converter<Single>
     {
-        private readonly NumberFormatInfo formatInfo;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public SingleConverter(NumberFormatInfo? formatInfo = null)
+        public SingleConverter(IFormatProvider? formatProvider = null)
         {
-            this.formatInfo = formatInfo ?? NumberFormatInfo.InvariantInfo;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Single.Parse(str, this.formatInfo);
+            return Single.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Single)obj).ToString(this.formatInfo);
+            return ((Single)obj).ToString(this.formatProvider);
         }
     }
 }

@@ -1,28 +1,28 @@
-#nullable enable
+﻿#nullable enable
 namespace UniT.Data.Conversion
 {
     using System;
     using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class DoubleConverter : Converter<Double>
+    public sealed class ByteConverter : Converter<Byte>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DoubleConverter(IFormatProvider? formatProvider = null)
+        public ByteConverter(IFormatProvider? formatProvider = null)
         {
             this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Double.Parse(str, this.formatProvider);
+            return Byte.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Double)obj).ToString(this.formatProvider);
+            return ((Byte)obj).ToString(this.formatProvider);
         }
     }
 }

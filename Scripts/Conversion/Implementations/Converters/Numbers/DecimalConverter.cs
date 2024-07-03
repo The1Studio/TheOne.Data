@@ -7,22 +7,22 @@ namespace UniT.Data.Conversion
 
     public sealed class DecimalConverter : Converter<Decimal>
     {
-        private readonly NumberFormatInfo formatInfo;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DecimalConverter(NumberFormatInfo? formatInfo = null)
+        public DecimalConverter(IFormatProvider? formatProvider = null)
         {
-            this.formatInfo = formatInfo ?? NumberFormatInfo.InvariantInfo;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Decimal.Parse(str, this.formatInfo);
+            return Decimal.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Decimal)obj).ToString(this.formatInfo);
+            return ((Decimal)obj).ToString(this.formatProvider);
         }
     }
 }

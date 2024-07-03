@@ -7,24 +7,24 @@ namespace UniT.Data.Conversion
 
     public sealed class DateTimeConverter : Converter<DateTime>
     {
-        private readonly string             format;
-        private readonly DateTimeFormatInfo formatInfo;
+        private readonly string          format;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DateTimeConverter(string format = "dd/MM/yyyy hh:mm:ss", DateTimeFormatInfo? formatInfo = null)
+        public DateTimeConverter(string format = "dd/MM/yyyy hh:mm:ss", IFormatProvider? formatProvider = null)
         {
-            this.format     = format;
-            this.formatInfo = formatInfo ?? DateTimeFormatInfo.InvariantInfo;
+            this.format         = format;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return DateTime.ParseExact(str, this.format, this.formatInfo);
+            return DateTime.ParseExact(str, this.format, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((DateTime)obj).ToString(this.format, this.formatInfo);
+            return ((DateTime)obj).ToString(this.format, this.formatProvider);
         }
     }
 }

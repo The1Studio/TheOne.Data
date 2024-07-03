@@ -19,6 +19,7 @@ namespace UniT.Data.Conversion
 
             #region Numbers
 
+            container.AddInterfaces<ByteConverter>();
             container.AddInterfaces<Int16Converter>();
             container.AddInterfaces<Int32Converter>();
             container.AddInterfaces<Int64Converter>();
@@ -58,6 +59,8 @@ namespace UniT.Data.Conversion
             container.AddInterfaces<Vector4Converter>();    // Depend on TupleConverter
             container.AddInterfaces<Vector2IntConverter>(); // Depend on TupleConverter
             container.AddInterfaces<Vector3IntConverter>(); // Depend on TupleConverter
+            container.AddInterfaces<ColorConverter>();      // Depend on TupleConverter
+            container.AddInterfaces<Color32Converter>();    // Depend on TupleConverter
 
             #endregion
 

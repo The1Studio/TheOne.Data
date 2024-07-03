@@ -7,22 +7,22 @@ namespace UniT.Data.Conversion
 
     public sealed class Int16Converter : Converter<Int16>
     {
-        private readonly NumberFormatInfo formatInfo;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public Int16Converter(NumberFormatInfo? formatInfo = null)
+        public Int16Converter(IFormatProvider? formatProvider = null)
         {
-            this.formatInfo = formatInfo ?? NumberFormatInfo.InvariantInfo;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Int16.Parse(str, this.formatInfo);
+            return Int16.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Int16)obj).ToString(this.formatInfo);
+            return ((Int16)obj).ToString(this.formatProvider);
         }
     }
 }

@@ -7,22 +7,22 @@ namespace UniT.Data.Conversion
 
     public sealed class UInt64Converter : Converter<UInt64>
     {
-        private readonly NumberFormatInfo formatInfo;
+        private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public UInt64Converter(NumberFormatInfo? formatInfo = null)
+        public UInt64Converter(IFormatProvider? formatProvider = null)
         {
-            this.formatInfo = formatInfo ?? NumberFormatInfo.InvariantInfo;
+            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return UInt64.Parse(str, this.formatInfo);
+            return UInt64.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((UInt64)obj).ToString(this.formatInfo);
+            return ((UInt64)obj).ToString(this.formatProvider);
         }
     }
 }

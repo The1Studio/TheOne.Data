@@ -16,7 +16,7 @@ namespace UniT.Data
     {
         public static void BindDataManager(
             this DiContainer   container,
-            IEnumerable<Type>  dataTypes,
+            IEnumerable<Type>? dataTypes        = null,
             IEnumerable<Type>? converterTypes   = null,
             IEnumerable<Type>? serializerTypes  = null,
             IEnumerable<Type>? dataStorageTypes = null
@@ -26,7 +26,7 @@ namespace UniT.Data
             container.BindLoggerManager();
             container.BindResourceManagers();
 
-            dataTypes.ForEach(type =>
+            dataTypes?.ForEach(type =>
             {
                 if (!typeof(IData).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IData)}");
                 container.BindInterfacesAndSelfTo(type).AsSingle();

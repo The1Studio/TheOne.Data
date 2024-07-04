@@ -114,7 +114,7 @@ namespace UniT.Data.Serialization
                 var rowType = data.RowType;
                 var constructor = rowType.GetConstructors().SingleOrDefault(constructor => constructor.GetParameters().All(parameter => parameter.HasDefaultValue))
                     ?? rowType.GetSingleConstructor();
-                var parameters = constructor.GetParameters().Select(parameter => parameter.DefaultValue).ToArray();
+                var parameters = constructor.GetParameters().Select(parameter => parameter.HasDefaultValue ? parameter.DefaultValue : null).ToArray();
                 this.rowFactory = () => constructor.Invoke(parameters);
 
                 #endregion

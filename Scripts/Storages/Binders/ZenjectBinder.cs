@@ -11,7 +11,9 @@ namespace UniT.Data.Storage
     {
         public static void BindDataStorages(this DiContainer container, IEnumerable<Type>? dataStorageTypes = null)
         {
-            container.BindInterfacesAndSelfTo<AssetDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetBinaryDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetTextDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetBlobDataStorage>().AsSingle();
             container.BindInterfacesAndSelfTo<PlayerPrefsDataStorage>().AsSingle();
 
             dataStorageTypes?.ForEach(type =>

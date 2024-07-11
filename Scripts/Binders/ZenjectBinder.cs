@@ -7,7 +7,6 @@ namespace UniT.Data
     using UniT.Data.Conversion;
     using UniT.Data.Serialization;
     using UniT.Data.Storage;
-    using UniT.Extensions;
     using UniT.Logging;
     using UniT.ResourceManagement;
     using Zenject;
@@ -16,7 +15,6 @@ namespace UniT.Data
     {
         public static void BindDataManager(
             this DiContainer   container,
-            IEnumerable<Type>? dataTypes        = null,
             IEnumerable<Type>? converterTypes   = null,
             IEnumerable<Type>? serializerTypes  = null,
             IEnumerable<Type>? dataStorageTypes = null
@@ -25,17 +23,9 @@ namespace UniT.Data
             if (container.HasBinding<IDataManager>()) return;
             container.BindLoggerManager();
             container.BindResourceManagers();
-
-            dataTypes?.ForEach(type =>
-            {
-                if (!typeof(IData).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IData)}");
-                container.BindInterfacesAndSelfTo(type).AsSingle();
-            });
-
             container.BindConverterManager(converterTypes);
             container.BindSerializers(serializerTypes);
             container.BindDataStorages(dataStorageTypes);
-
             container.BindInterfacesTo<DataManager>().AsSingle();
         }
     }

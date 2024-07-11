@@ -2,7 +2,6 @@
 namespace UniT.Data.Storage
 {
     using System;
-    using System.Linq;
     using UniT.Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
@@ -13,32 +12,34 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public sealed class PlayerPrefsDataStorage : IReadableStringStorage, IWritableStringStorage
+    public sealed class PlayerPrefsDataStorage : IReadableDataStorage, IWritableDataStorage
     {
         [Preserve]
         public PlayerPrefsDataStorage()
         {
         }
 
+        public Type RawDataType => typeof(string);
+
         bool IDataStorage.CanStore(Type type) => typeof(IReadableData).IsAssignableFrom(type) && typeof(IWritableData).IsAssignableFrom(type);
 
-        string[] IReadableStringStorage.Read(string[] keys) => Read(keys);
+        object? IReadableDataStorage.Read(string key) => Read(key);
 
-        void IWritableStringStorage.Write(string[] keys, string[] values) => Write(keys, values);
+        void IWritableDataStorage.Write(string key, object value) => Write(key, value);
 
         void IWritableDataStorage.Flush() => Flush();
 
         #if UNIT_UNITASK
-        UniTask<string[]> IReadableStringStorage.ReadAsync(string[] keys, IProgress<float>? progress, CancellationToken cancellationToken)
+        UniTask<object?> IReadableDataStorage.ReadAsync(string key,  IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var rawDatas = Read(keys);
+            var rawData = Read(key);
             progress?.Report(1);
-            return UniTask.FromResult(rawDatas);
+            return UniTask.FromResult(rawData);
         }
 
-        UniTask IWritableStringStorage.WriteAsync(string[] keys, string[] values, IProgress<float>? progress, CancellationToken cancellationToken)
+        UniTask IWritableDataStorage.WriteAsync(string key, object value,  IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            Write(keys, values);
+            Write(key, value);
             progress?.Report(1);
             return UniTask.CompletedTask;
         }
@@ -50,17 +51,17 @@ namespace UniT.Data.Storage
             return UniTask.CompletedTask;
         }
         #else
-        IEnumerator IReadableStringStorage.ReadAsync(string[] keys, Action<string[]> callback, IProgress<float>? progress)
+        IEnumerator IReadableDataStorage.ReadAsync(string key, Action<object?> callback, IProgress<float>? progress)
         {
-            var rawDatas = Read(keys);
+            var rawData = Read(key);
             progress?.Report(1);
-            callback(rawDatas);
+            callback(rawData);
             yield break;
         }
 
-        IEnumerator IWritableStringStorage.WriteAsync(string[] keys, string[] values, Action? callback, IProgress<float>? progress)
+        IEnumerator IWritableDataStorage.WriteAsync(string key, object value, Action? callback, IProgress<float>? progress)
         {
-            Write(keys, values);
+            Write(key, value);
             progress?.Report(1);
             callback?.Invoke();
             yield break;
@@ -75,19 +76,10 @@ namespace UniT.Data.Storage
         }
         #endif
 
-        private static string[] Read(string[] keys)
-        {
-            return keys.Select(PlayerPrefs.GetString).ToArray();
-        }
+        private static object? Read(string key) => PlayerPrefs.GetString(key).NullIfWhitespace();
 
-        private static void Write(string[] keys, string[] values)
-        {
-            IterTools.Zip(keys, values).ForEach(PlayerPrefs.SetString);
-        }
+        private static void Write(string key, object value) => PlayerPrefs.SetString(key, (string)value);
 
-        private static void Flush()
-        {
-            PlayerPrefs.Save();
-        }
+        private static void Flush() => PlayerPrefs.Save();
     }
 }

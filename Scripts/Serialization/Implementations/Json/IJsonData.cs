@@ -2,7 +2,7 @@
 #nullable enable
 namespace UniT.Data.Serialization
 {
-    public interface IJsonData
+    public interface IJsonData : IData
     {
     }
 }

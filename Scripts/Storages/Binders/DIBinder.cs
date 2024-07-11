@@ -11,7 +11,9 @@ namespace UniT.Data.Storage
     {
         public static void AddDataStorages(this DependencyContainer container, IEnumerable<Type>? dataStorageTypes = null)
         {
-            container.AddInterfacesAndSelf<AssetDataStorage>();
+            container.AddInterfacesAndSelf<AssetBinaryDataStorage>();
+            container.AddInterfacesAndSelf<AssetTextDataStorage>();
+            container.AddInterfacesAndSelf<AssetBlobDataStorage>();
             container.AddInterfacesAndSelf<PlayerPrefsDataStorage>();
 
             dataStorageTypes?.ForEach(type =>

@@ -5,7 +5,7 @@ namespace UniT.Data.Serialization
     using System;
     using System.Collections;
 
-    public interface ICsvData
+    public interface ICsvData : IData
     {
         public Type RowType { get; }
 

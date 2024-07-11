@@ -14,11 +14,8 @@ namespace UniT.Data.Serialization
     using UniT.Data.Conversion;
     using UniT.Extensions;
     using UnityEngine.Scripting;
-    #if UNIT_UNITASK
-    using Cysharp.Threading.Tasks;
-    #endif
 
-    public sealed class CsvSerializer : IStringSerializer
+    public sealed class CsvSerializer : Serializer<string, ICsvData>
     {
         private readonly IConverterManager converterManager;
         private readonly CsvConfiguration  configuration;
@@ -35,36 +32,22 @@ namespace UniT.Data.Serialization
                 };
         }
 
-        bool ISerializer.CanSerialize(Type type) => typeof(ICsvData).IsAssignableFrom(type);
-
-        void IStringSerializer.Populate(IData data, string rawData) => this.Populate(data, rawData);
-
-        string IStringSerializer.Serialize(IData data) => this.Serialize(data);
-
-        #if UNIT_UNITASK
-        UniTask IStringSerializer.PopulateAsync(IData data, string rawData) => UniTask.RunOnThreadPool(() => this.Populate(data, rawData));
-
-        UniTask<string> IStringSerializer.SerializeAsync(IData data) => UniTask.RunOnThreadPool(() => this.Serialize(data));
-        #else
-        IEnumerator IStringSerializer.PopulateAsync(IData data, string rawData, Action? callback) => CoroutineRunner.Run(() => this.Populate(data, rawData), callback);
-
-        IEnumerator IStringSerializer.SerializeAsync(IData data, Action<string> callback) => CoroutineRunner.Run(() => this.Serialize(data), callback);
-        #endif
-
-        private void Populate(IData data, string rawData)
+        protected override ICsvData Deserialize(Type type, string rawData)
         {
+            var       data   = (ICsvData)Activator.CreateInstance(type);
             using var reader = new CsvReader(new StringReader(rawData), this.configuration);
-            if (!reader.Read()) return;
+            if (!reader.Read()) return data;
             reader.ReadHeader();
-            var populator = new Populator(this.converterManager, (ICsvData)data, reader);
+            var populator = new Populator(this.converterManager, data, reader);
             while (reader.Read()) populator.Populate();
+            return data;
         }
 
-        private string Serialize(IData data)
+        protected override string Serialize(ICsvData data)
         {
             using var stringWriter = new StringWriter();
             using var writer       = new CsvWriter(stringWriter, this.configuration);
-            var       serializer   = new Serializer(this.converterManager, (ICsvData)data, writer);
+            var       serializer   = new Serializer(this.converterManager, data, writer);
 
             var hasValue = serializer.MoveNext();
             if (!hasValue) return string.Empty;
@@ -124,16 +107,23 @@ namespace UniT.Data.Serialization
                 var (prefix, key)                = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
                 this.keyField                    = key.IsNullOrWhitespace() ? normalFields.First() : normalFields.First(field => field.Name == key);
-                this.normalFields = normalFields.ToDictionary(
-                    field => field,
-                    field =>
+                this.normalFields = normalFields
+                    .Select(field =>
                     {
                         var column = field.GetCsvColumn(prefix);
                         var index  = reader.GetFieldIndex(column);
-                        if (index < 0) throw new InvalidOperationException($"Column {column} not found in {rowType.Name}. If this is intentional, add [CsvIgnore] attribute to the field.");
-                        return (index, this.converterManager.GetConverter(field.FieldType));
-                    }
-                );
+                        return (field, column, index);
+                    })
+                    .Where((field, column, index) =>
+                    {
+                        if (index >= 0) return true;
+                        if (field.IsCsvOptional()) return false;
+                        throw new InvalidOperationException($"Column {column} not found in {rowType.Name}. If this is intentional, add [CsvIgnore] or [CsvOptional] attribute to the field.");
+                    })
+                    .ToDictionary(
+                        (field, _, _) => field,
+                        (field, _, index) => (index, this.converterManager.GetConverter(field.FieldType))
+                    );
                 this.nestedFields = nestedFields;
 
                 #endregion

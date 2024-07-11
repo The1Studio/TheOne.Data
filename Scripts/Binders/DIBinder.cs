@@ -8,7 +8,6 @@ namespace UniT.Data
     using UniT.Data.Serialization;
     using UniT.Data.Storage;
     using UniT.DI;
-    using UniT.Extensions;
     using UniT.Logging;
     using UniT.ResourceManagement;
 
@@ -16,7 +15,6 @@ namespace UniT.Data
     {
         public static void AddDataManager(
             this DependencyContainer container,
-            IEnumerable<Type>?       dataTypes        = null,
             IEnumerable<Type>?       converterTypes   = null,
             IEnumerable<Type>?       serializerTypes  = null,
             IEnumerable<Type>?       dataStorageTypes = null
@@ -25,17 +23,9 @@ namespace UniT.Data
             if (container.Contains<IDataManager>()) return;
             container.AddLoggerManager();
             container.AddResourceManagers();
-
-            dataTypes?.ForEach(type =>
-            {
-                if (!typeof(IData).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IData)}");
-                container.AddInterfacesAndSelf(type);
-            });
-
             container.AddConverterManager(converterTypes);
             container.AddSerializers(serializerTypes);
             container.AddDataStorages(dataStorageTypes);
-
             container.AddInterfaces<DataManager>();
         }
     }

@@ -6,7 +6,7 @@ namespace UniT.Data.Serialization
     using System.Reflection;
     using UniT.Extensions;
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvColumnAttribute : Attribute
     {
         public string Name         { get; }
@@ -23,10 +23,8 @@ namespace UniT.Data.Serialization
     {
         public static string GetCsvColumn(this FieldInfo field, string prefix)
         {
-            return (field.GetCustomAttribute<CsvColumnAttribute>() ?? field.ToPropertyInfo()?.GetCustomAttribute<CsvColumnAttribute>()) is { } attr
-                ? attr.IgnorePrefix
-                    ? attr.Name
-                    : prefix + attr.Name
+            return field.GetCustomAttribute<CsvColumnAttribute>() is { } attr
+                ? attr.IgnorePrefix ? attr.Name : prefix + attr.Name
                 : prefix + field.Name.ToPropertyName();
         }
     }

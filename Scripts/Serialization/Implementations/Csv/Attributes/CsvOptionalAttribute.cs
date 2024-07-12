@@ -4,9 +4,8 @@ namespace UniT.Data.Serialization
 {
     using System;
     using System.Reflection;
-    using UniT.Extensions;
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvOptionalAttribute : Attribute
     {
     }
@@ -15,8 +14,7 @@ namespace UniT.Data.Serialization
     {
         public static bool IsCsvOptional(this FieldInfo field)
         {
-            return field.GetCustomAttribute<CsvIgnoreAttribute>() is { }
-                || field.ToPropertyInfo()?.GetCustomAttribute<CsvIgnoreAttribute>() is { };
+            return field.GetCustomAttribute<CsvOptionalAttribute>() is { };
         }
     }
 }

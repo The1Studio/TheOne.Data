@@ -8,7 +8,7 @@ namespace UniT.Data.Serialization
     using System.Reflection;
     using UniT.Extensions;
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvIgnoreAttribute : Attribute
     {
     }
@@ -17,8 +17,7 @@ namespace UniT.Data.Serialization
     {
         private static bool IsCsvIgnored(this FieldInfo field)
         {
-            return field.GetCustomAttribute<CsvIgnoreAttribute>() is { }
-                || field.ToPropertyInfo()?.GetCustomAttribute<CsvIgnoreAttribute>() is { };
+            return field.GetCustomAttribute<CsvIgnoreAttribute>() is { };
         }
 
         public static (List<FieldInfo> NormalFields, List<FieldInfo> NestedFields) GetCsvFields(this Type type)

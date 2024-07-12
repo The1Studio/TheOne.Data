@@ -22,7 +22,7 @@ namespace UniT.Data
         {
             if (container.HasBinding<IDataManager>()) return;
             container.BindLoggerManager();
-            container.BindResourceManagers();
+            container.BindAssetsManager();
             container.BindConverterManager(converterTypes);
             container.BindSerializers(serializerTypes);
             container.BindDataStorages(dataStorageTypes);

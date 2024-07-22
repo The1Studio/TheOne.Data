@@ -34,6 +34,12 @@ namespace UniT.Data
             this.Flush(keys);
         }
 
+        public void SaveAndFlushAll()
+        {
+            this.SaveAll();
+            this.FlushAll();
+        }
+
         public IData Load(string key, Type type) => this.Load(new[] { key }, new[] { type })[0];
 
         public void Save(string key) => this.Save(new[] { key });
@@ -78,6 +84,13 @@ namespace UniT.Data
             await this.FlushAsync(keys, subProgresses[1], cancellationToken);
         }
 
+        public async UniTask SaveAndFlushAllAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default)
+        {
+            var subProgresses = progress.CreateSubProgresses(2).ToArray();
+            await this.SaveAllAsync(subProgresses[0], cancellationToken);
+            await this.FlushAllAsync(subProgresses[1], cancellationToken);
+        }
+
         public UniTask<IData> LoadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(new[] { key }, new[] { type }, progress, cancellationToken).ContinueWith(datas => datas[0]);
 
         public UniTask SaveAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(new[] { key }, progress, cancellationToken);
@@ -116,6 +129,14 @@ namespace UniT.Data
             var subProgresses = progress.CreateSubProgresses(2).ToArray();
             yield return this.SaveAsync(keys, progress: subProgresses[0]);
             yield return this.FlushAsync(keys, progress: subProgresses[1]);
+            callback?.Invoke();
+        }
+
+        public IEnumerator SaveAndFlushAllAsync(Action? callback = null, IProgress<float>? progress = null)
+        {
+            var subProgresses = progress.CreateSubProgresses(2).ToArray();
+            yield return this.SaveAllAsync(progress: subProgresses[0]);
+            yield return this.FlushAllAsync(progress: subProgresses[1]);
             callback?.Invoke();
         }
 

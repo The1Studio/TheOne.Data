@@ -29,9 +29,23 @@ namespace UniT.Data.Serialization
 
         UniTask<object> ISerializer.SerializeAsync(IData data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);
 
-        protected virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken) => UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
+        protected virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken)
+        {
+            #if !UNITY_WEBGL
+            return UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
+            #else
+            return UniTask.FromResult(this.Deserialize(type, rawData));
+            #endif
+        }
 
-        protected virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken) => UniTask.RunOnThreadPool(() => this.Serialize(data), cancellationToken: cancellationToken);
+        protected virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken)
+        {
+            #if !UNITY_WEBGL
+            return UniTask.RunOnThreadPool(() => this.Serialize(data), cancellationToken: cancellationToken);
+            #else
+            return UniTask.FromResult(this.Serialize(data));
+            #endif
+        }
         #else
         IEnumerator ISerializer.DeserializeAsync(Type type, object rawData, Action<IData> callback) => this.DeserializeAsync(type, (TRawData)rawData, data => callback(data));
 

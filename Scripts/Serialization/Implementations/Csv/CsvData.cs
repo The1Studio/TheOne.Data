@@ -8,6 +8,15 @@ namespace UniT.Data.Serialization
     using UniT.Extensions;
     using UnityEngine.Scripting;
 
+    public abstract record CsvRecordData : ICsvData
+    {
+        Type ICsvData.RowType => this.GetType();
+
+        void ICsvData.Add(object key, object value) => value.CopyTo(this);
+
+        IEnumerator ICsvData.GetEnumerator() { yield return this; }
+    }
+
     public abstract class CsvData : ICsvData
     {
         Type ICsvData.RowType => this.GetType();

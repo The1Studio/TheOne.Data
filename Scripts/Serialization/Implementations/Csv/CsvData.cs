@@ -12,18 +12,30 @@ namespace UniT.Data.Serialization
     {
         Type ICsvData.RowType => this.GetType();
 
-        void ICsvData.Add(object key, object value) => value.CopyTo(this);
+        void ICsvData.Add(object key, object value)
+        {
+            value.CopyTo(this);
+            this.HasValue = true;
+        }
 
         IEnumerator ICsvData.GetEnumerator() { yield return this; }
+
+        [field: CsvIgnore] public bool HasValue { get; private set; }
     }
 
     public abstract class CsvData : ICsvData
     {
         Type ICsvData.RowType => this.GetType();
 
-        void ICsvData.Add(object key, object value) => value.CopyTo(this);
+        void ICsvData.Add(object key, object value)
+        {
+            value.CopyTo(this);
+            this.HasValue = true;
+        }
 
         IEnumerator ICsvData.GetEnumerator() { yield return this; }
+
+        [field: CsvIgnore] public bool HasValue { get; private set; }
     }
 
     public class CsvData<T> : ICsvData, IReadOnlyList<T>

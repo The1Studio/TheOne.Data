@@ -60,7 +60,7 @@ namespace UniT.Data
                     var rawData = readableStorage.Read(key);
                     if (rawData is null)
                     {
-                        var data = (IData)Activator.CreateInstance(type);
+                        var data = (IData)type.GetEmptyConstructor()();
                         this.logger.Debug($"Instantiated {key}");
                         return data;
                     }
@@ -129,7 +129,7 @@ namespace UniT.Data
                     var rawData = await readableStorage.ReadAsync(key, progress, cancellationToken);
                     if (rawData is null)
                     {
-                        var data = (IData)Activator.CreateInstance(type);
+                        var data = (IData)type.GetEmptyConstructor()();
                         this.logger.Debug($"Instantiated {key}");
                         return data;
                     }
@@ -208,7 +208,7 @@ namespace UniT.Data
                 yield return readableStorage.ReadAsync(key, result => rawData = result, progress);
                 if (rawData is null)
                 {
-                    callback((IData)Activator.CreateInstance(type));
+                    callback((IData)type.GetEmptyConstructor()());
                     this.logger.Debug($"Instantiated {key}");
                 }
                 else

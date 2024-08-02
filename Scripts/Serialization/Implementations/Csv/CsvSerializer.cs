@@ -75,7 +75,7 @@ namespace UniT.Data.Serialization
             private readonly IConverterManager                                                 converterManager;
             private readonly ICsvData                                                          data;
             private readonly CsvReader                                                         reader;
-            private readonly Func<object>                                                      rowFactory;
+            private readonly Func<object>                                                      rowConstructor;
             private readonly FieldInfo                                                         keyField;
             private readonly IReadOnlyDictionary<FieldInfo, (int Index, IConverter Converter)> normalFields;
             private readonly IReadOnlyList<FieldInfo>                                          nestedFields;
@@ -89,7 +89,7 @@ namespace UniT.Data.Serialization
                 this.reader           = reader;
 
                 var rowType = data.RowType;
-                this.rowFactory                  = this.GetConstructor(rowType);
+                this.rowConstructor              = rowType.GetEmptyConstructor();
                 var (prefix, key)                = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
                 this.keyField                    = key.IsNullOrWhitespace() ? normalFields.First() : normalFields.First(field => field.Name == key);
@@ -118,7 +118,7 @@ namespace UniT.Data.Serialization
             public void Populate()
             {
                 var keyValue = default(object);
-                var row      = this.rowFactory();
+                var row      = this.rowConstructor();
 
                 foreach (var (field, (index, converter)) in this.normalFields)
                 {
@@ -139,20 +139,12 @@ namespace UniT.Data.Serialization
                 {
                     this.nestedPopulators.GetOrAdd(field, () =>
                     {
-                        var nestedData      = (ICsvData)this.GetConstructor(field.FieldType)();
+                        var nestedData      = (ICsvData)field.FieldType.GetEmptyConstructor()();
                         var nestedPopulator = new Populator(this.converterManager, nestedData, this.reader);
                         field.SetValue(row, nestedData);
                         return nestedPopulator;
                     }).Populate();
                 }
-            }
-
-            private Func<object> GetConstructor(Type type)
-            {
-                var constructor = type.GetConstructors().SingleOrDefault(constructor => constructor.GetParameters().All(parameter => parameter.HasDefaultValue))
-                    ?? type.GetSingleConstructor();
-                var parameters = constructor.GetParameters().Select(parameter => parameter.HasDefaultValue ? parameter.DefaultValue : null).ToArray();
-                return () => constructor.Invoke(parameters);
             }
         }
 

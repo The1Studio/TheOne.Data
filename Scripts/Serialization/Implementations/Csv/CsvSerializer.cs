@@ -34,7 +34,7 @@ namespace UniT.Data.Serialization
 
         protected override ICsvData Deserialize(Type type, string rawData)
         {
-            var       data   = (ICsvData)Activator.CreateInstance(type);
+            var       data   = (ICsvData)type.GetEmptyConstructor()();
             using var reader = new CsvReader(new StringReader(rawData), this.configuration);
             if (!reader.Read()) return data;
             reader.ReadHeader();

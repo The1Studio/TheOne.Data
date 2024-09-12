@@ -1,13 +1,13 @@
 ﻿#if UNIT_DI
 #nullable enable
-namespace UniT.Data.Serialization
+namespace UniT.Data.Serialization.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.DI;
     using UniT.Extensions;
 
-    public static class DIBinder
+    public static class SerializationDI
     {
         public static void AddSerializers(this DependencyContainer container, IEnumerable<Type>? serializersTypes = null)
         {

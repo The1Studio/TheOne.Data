@@ -1,13 +1,13 @@
 ﻿#if UNIT_ZENJECT
 #nullable enable
-namespace UniT.Data.Conversion
+namespace UniT.Data.Conversion.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.Extensions;
     using Zenject;
 
-    public static class ZenjectBinder
+    public static class ConverterManagerZenject
     {
         public static void BindConverterManager(this DiContainer container, IEnumerable<Type>? converterTypes = null)
         {

@@ -1,13 +1,13 @@
 ﻿#if UNIT_ZENJECT
 #nullable enable
-namespace UniT.Data.Storage
+namespace UniT.Data.Storage.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.Extensions;
     using Zenject;
 
-    public static class ZenjectBinder
+    public static class StorageZenject
     {
         public static void BindDataStorages(this DiContainer container, IEnumerable<Type>? dataStorageTypes = null)
         {

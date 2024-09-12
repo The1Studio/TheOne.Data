@@ -1,13 +1,13 @@
 ﻿#if UNIT_DI
 #nullable enable
-namespace UniT.Data.Conversion
+namespace UniT.Data.Conversion.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.DI;
     using UniT.Extensions;
 
-    public static class DIBinder
+    public static class ConverterManagerDI
     {
         public static void AddConverterManager(this DependencyContainer container, IEnumerable<Type>? converterTypes = null)
         {

@@ -1,13 +1,13 @@
 ﻿#if UNIT_DI
 #nullable enable
-namespace UniT.Data.Storage
+namespace UniT.Data.Storage.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.DI;
     using UniT.Extensions;
 
-    public static class DIBinder
+    public static class StorageDI
     {
         public static void AddDataStorages(this DependencyContainer container, IEnumerable<Type>? dataStorageTypes = null)
         {

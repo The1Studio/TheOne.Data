@@ -1,17 +1,17 @@
 ﻿#if UNIT_DI
 #nullable enable
-namespace UniT.Data
+namespace UniT.Data.DI
 {
     using System;
     using System.Collections.Generic;
-    using UniT.Data.Conversion;
-    using UniT.Data.Serialization;
-    using UniT.Data.Storage;
+    using UniT.Data.Conversion.DI;
+    using UniT.Data.Serialization.DI;
+    using UniT.Data.Storage.DI;
     using UniT.DI;
-    using UniT.Logging;
-    using UniT.ResourceManagement;
+    using UniT.Logging.DI;
+    using UniT.ResourceManagement.DI;
 
-    public static class DIBinder
+    public static class DataManagerDI
     {
         public static void AddDataManager(
             this DependencyContainer container,

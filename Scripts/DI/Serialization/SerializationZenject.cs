@@ -1,13 +1,13 @@
 ﻿#if UNIT_ZENJECT
 #nullable enable
-namespace UniT.Data.Serialization
+namespace UniT.Data.Serialization.DI
 {
     using System;
     using System.Collections.Generic;
     using UniT.Extensions;
     using Zenject;
 
-    public static class ZenjectBinder
+    public static class SerializationZenject
     {
         public static void BindSerializers(this DiContainer container, IEnumerable<Type>? serializersTypes = null)
         {

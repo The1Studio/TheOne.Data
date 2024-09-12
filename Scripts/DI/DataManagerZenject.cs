@@ -1,17 +1,17 @@
 ﻿#if UNIT_ZENJECT
 #nullable enable
-namespace UniT.Data
+namespace UniT.Data.DI
 {
     using System;
     using System.Collections.Generic;
-    using UniT.Data.Conversion;
-    using UniT.Data.Serialization;
-    using UniT.Data.Storage;
-    using UniT.Logging;
-    using UniT.ResourceManagement;
+    using UniT.Data.Conversion.DI;
+    using UniT.Data.Serialization.DI;
+    using UniT.Data.Storage.DI;
+    using UniT.Logging.DI;
+    using UniT.ResourceManagement.DI;
     using Zenject;
 
-    public static class ZenjectBinder
+    public static class DataManagerZenject
     {
         public static void BindDataManager(
             this DiContainer   container,

@@ -1,0 +1,30 @@
+{
+  "name": "UniT.Data.DI",
+  "rootNamespace": "UniT.Data.DI",
+  "references": [
+    "UniT.Extensions",
+    "UniT.Logging.DI",
+    "UniT.ResourceManagement.DI",
+    "UniT.Data",
+    "UniT.DI",
+    "Zenject",
+    "VContainer"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.frostbun.unit.di",
+      "expression": "",
+      "define": "UNIT_DI"
+    },
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "UNIT_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "UNIT_VCONTAINER"
+    }
+  ]
+}

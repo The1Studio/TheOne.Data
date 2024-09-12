@@ -25,6 +25,16 @@
       "name": "jp.hadashikick.vcontainer",
       "expression": "",
       "define": "UNIT_VCONTAINER"
+    },
+    {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "expression": "",
+      "define": "UNIT_JSON"
+    },
+    {
+      "name": "org.nuget.csvhelper",
+      "expression": "",
+      "define": "UNIT_CSV"
     }
   ]
 }

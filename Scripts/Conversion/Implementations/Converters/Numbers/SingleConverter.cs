@@ -2,27 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class SingleConverter : Converter<Single>
+    public sealed class SingleConverter : Converter<float>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public SingleConverter(IFormatProvider? formatProvider = null)
+        public SingleConverter(IFormatProvider formatProvider)
         {
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Single.Parse(str, this.formatProvider);
+            return float.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Single)obj).ToString(this.formatProvider);
+            return ((float)obj).ToString(this.formatProvider);
         }
     }
 }

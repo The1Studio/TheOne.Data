@@ -3,25 +3,17 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using Newtonsoft.Json;
     using UnityEngine.Scripting;
 
-    public sealed class JsonConverter : Converter<Object>
+    public sealed class JsonConverter : Converter<object>
     {
         private readonly JsonSerializerSettings settings;
 
         [Preserve]
-        public JsonConverter(JsonSerializerSettings? settings = null)
+        public JsonConverter(JsonSerializerSettings settings)
         {
-            this.settings = settings
-                ?? new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                };
+            this.settings = settings;
         }
 
         protected override object ConvertFromString(string str, Type type)

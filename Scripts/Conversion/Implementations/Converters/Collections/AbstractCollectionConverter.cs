@@ -11,18 +11,22 @@ namespace UniT.Data.Conversion
     /// <summary>
     ///     Depends on <see cref="ArrayConverter"/>
     /// </summary>
-    public sealed class GenericCollectionConverter : Converter
+    public sealed class AbstractCollectionConverter : Converter
     {
+        private static readonly Type[] SupportedTypes =
+        {
+            typeof(ICollection<>),
+            typeof(IList<>),
+            typeof(IReadOnlyCollection<>),
+            typeof(IReadOnlyList<>),
+        };
+
         [Preserve]
-        public GenericCollectionConverter()
+        public AbstractCollectionConverter()
         {
         }
 
-        protected override bool CanConvert(Type type) =>
-            type.IsGenericTypeOf(typeof(ICollection<>))
-            || type.IsGenericTypeOf(typeof(IReadOnlyCollection<>))
-            || type.IsGenericTypeOf(typeof(IList<>))
-            || type.IsGenericTypeOf(typeof(IReadOnlyList<>));
+        protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
 
         protected override object ConvertFromString(string str, Type type)
         {

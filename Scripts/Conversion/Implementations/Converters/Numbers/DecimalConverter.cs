@@ -2,27 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class DecimalConverter : Converter<Decimal>
+    public sealed class DecimalConverter : Converter<decimal>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DecimalConverter(IFormatProvider? formatProvider = null)
+        public DecimalConverter(IFormatProvider formatProvider)
         {
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Decimal.Parse(str, this.formatProvider);
+            return decimal.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Decimal)obj).ToString(this.formatProvider);
+            return ((decimal)obj).ToString(this.formatProvider);
         }
     }
 }

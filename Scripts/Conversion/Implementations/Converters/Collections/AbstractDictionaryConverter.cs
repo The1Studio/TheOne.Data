@@ -3,20 +3,27 @@ namespace UniT.Data.Conversion
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UniT.Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>
     ///     Depends on <see cref="DictionaryConverter"/>
     /// </summary>
-    public sealed class GenericDictionaryConverter : Converter
+    public sealed class AbstractDictionaryConverter : Converter
     {
+        private static readonly Type[] SupportedTypes =
+        {
+            typeof(IDictionary<,>),
+            typeof(IReadOnlyDictionary<,>),
+        };
+
         [Preserve]
-        public GenericDictionaryConverter()
+        public AbstractDictionaryConverter()
         {
         }
 
-        protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(IDictionary<,>)) || type.IsGenericTypeOf(typeof(IReadOnlyDictionary<,>));
+        protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
 
         protected override object ConvertFromString(string str, Type type)
         {

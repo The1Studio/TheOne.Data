@@ -13,9 +13,9 @@ namespace UniT.Data.Conversion
         private readonly string separator;
 
         [Preserve]
-        public TupleConverter(string separator = "|")
+        public TupleConverter(SeparatorConfig config)
         {
-            this.separator = separator;
+            this.separator = config.TupleSeparator;
         }
 
         protected override object ConvertFromString(string str, Type type)

@@ -2,27 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class UInt64Converter : Converter<UInt64>
+    public sealed class UInt64Converter : Converter<ulong>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public UInt64Converter(IFormatProvider? formatProvider = null)
+        public UInt64Converter(IFormatProvider formatProvider)
         {
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return UInt64.Parse(str, this.formatProvider);
+            return ulong.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((UInt64)obj).ToString(this.formatProvider);
+            return ((ulong)obj).ToString(this.formatProvider);
         }
     }
 }

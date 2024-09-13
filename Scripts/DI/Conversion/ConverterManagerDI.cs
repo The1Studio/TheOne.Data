@@ -2,14 +2,11 @@
 #nullable enable
 namespace UniT.Data.Conversion.DI
 {
-    using System;
-    using System.Collections.Generic;
     using UniT.DI;
-    using UniT.Extensions;
 
     public static class ConverterManagerDI
     {
-        public static void AddConverterManager(this DependencyContainer container, IEnumerable<Type>? converterTypes = null)
+        public static void AddConverterManager(this DependencyContainer container)
         {
             #region Converters
 
@@ -67,19 +64,13 @@ namespace UniT.Data.Conversion.DI
             #region Collections
 
             container.AddInterfaces<ArrayConverter>();
-            container.AddInterfaces<ListAndReadOnlyCollectionConverter>(); // Depend on ArrayConverter
-            container.AddInterfaces<GenericCollectionConverter>();         // Depend on ArrayConverter
-            container.AddInterfaces<DictionaryConverter>();                // Depend on ArrayConverter
-            container.AddInterfaces<ReadOnlyDictionaryConverter>();        // Depend on DictionaryConverter
-            container.AddInterfaces<GenericDictionaryConverter>();         // Depend on DictionaryConverter
+            container.AddInterfaces<CollectionConverter>();         // Depend on ArrayConverter
+            container.AddInterfaces<AbstractCollectionConverter>(); // Depend on ArrayConverter
+            container.AddInterfaces<DictionaryConverter>();         // Depend on ArrayConverter
+            container.AddInterfaces<ReadOnlyDictionaryConverter>(); // Depend on DictionaryConverter
+            container.AddInterfaces<AbstractDictionaryConverter>(); // Depend on DictionaryConverter
 
             #endregion
-
-            converterTypes?.ForEach(type =>
-            {
-                if (!typeof(IConverter).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IConverter)}");
-                container.AddInterfaces(type);
-            });
 
             #endregion
 

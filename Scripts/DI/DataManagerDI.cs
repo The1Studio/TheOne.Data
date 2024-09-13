@@ -3,7 +3,9 @@
 namespace UniT.Data.DI
 {
     using System;
-    using System.Collections.Generic;
+    using System.Globalization;
+    using CsvHelper.Configuration;
+    using Newtonsoft.Json;
     using UniT.Data.Conversion.DI;
     using UniT.Data.Serialization.DI;
     using UniT.Data.Storage.DI;
@@ -13,19 +15,50 @@ namespace UniT.Data.DI
 
     public static class DataManagerDI
     {
-        public static void AddDataManager(
-            this DependencyContainer container,
-            IEnumerable<Type>?       converterTypes   = null,
-            IEnumerable<Type>?       serializerTypes  = null,
-            IEnumerable<Type>?       dataStorageTypes = null
-        )
+        public static void AddDataManager(this DependencyContainer container)
         {
             if (container.Contains<IDataManager>()) return;
             container.AddLoggerManager();
             container.AddAssetsManager();
-            container.AddConverterManager(converterTypes);
-            container.AddSerializers(serializerTypes);
-            container.AddDataStorages(dataStorageTypes);
+
+            #region Configs
+
+            if (!container.Contains<SeparatorConfig>())
+            {
+                container.Add(new SeparatorConfig());
+            }
+            if (!container.Contains<IFormatProvider>())
+            {
+                container.Add((IFormatProvider)CultureInfo.InvariantCulture);
+            }
+            #if UNIT_JSON
+            if (!container.Contains<JsonSerializerSettings>())
+            {
+                container.Add(new JsonSerializerSettings
+                {
+                    Culture                = CultureInfo.InvariantCulture,
+                    TypeNameHandling       = TypeNameHandling.Auto,
+                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                });
+            }
+            #endif
+            #if UNIT_CSV
+            if (!container.Contains<CsvConfiguration>())
+            {
+                container.Add(new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    MissingFieldFound     = null,
+                    PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
+                });
+            }
+            #endif
+
+            #endregion
+
+            container.AddConverterManager();
+            container.AddSerializers();
+            container.AddDataStorages();
             container.AddInterfaces<DataManager>();
         }
     }

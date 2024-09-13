@@ -12,14 +12,23 @@ namespace UniT.Data.Conversion
     /// <summary>
     ///     Depends on <see cref="ArrayConverter"/>
     /// </summary>
-    public sealed class ListAndReadOnlyCollectionConverter : Converter
+    public sealed class CollectionConverter : Converter
     {
+        private static readonly Type[] SupportedTypes =
+        {
+            typeof(List<>),
+            typeof(ReadOnlyCollection<>),
+            typeof(HashSet<>),
+            typeof(Stack<>),
+            typeof(Queue<>),
+        };
+
         [Preserve]
-        public ListAndReadOnlyCollectionConverter()
+        public CollectionConverter()
         {
         }
 
-        protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(List<>)) || type.IsGenericTypeOf(typeof(ReadOnlyCollection<>));
+        protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
 
         protected override object ConvertFromString(string str, Type type)
         {

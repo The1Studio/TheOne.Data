@@ -3,7 +3,6 @@
 namespace UniT.Data.Serialization
 {
     using System;
-    using System.Globalization;
     using Newtonsoft.Json;
     using UnityEngine.Scripting;
 
@@ -12,16 +11,9 @@ namespace UniT.Data.Serialization
         private readonly JsonSerializerSettings settings;
 
         [Preserve]
-        public JsonSerializer(JsonSerializerSettings? settings = null)
+        public JsonSerializer(JsonSerializerSettings settings)
         {
-            this.settings = settings
-                ?? new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                };
+            this.settings = settings;
         }
 
         protected override IJsonData Deserialize(Type type, string rawData)

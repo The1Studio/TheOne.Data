@@ -4,7 +4,7 @@ namespace UniT.Data.Conversion
     using System;
     using UnityEngine.Scripting;
 
-    public sealed class StringConverter : Converter<String>
+    public sealed class StringConverter : Converter<string>
     {
         [Preserve]
         public StringConverter()

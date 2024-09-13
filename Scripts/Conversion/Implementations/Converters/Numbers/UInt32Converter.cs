@@ -2,27 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class UInt32Converter : Converter<UInt32>
+    public sealed class UInt32Converter : Converter<uint>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public UInt32Converter(IFormatProvider? formatProvider = null)
+        public UInt32Converter(IFormatProvider formatProvider)
         {
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return UInt32.Parse(str, this.formatProvider);
+            return uint.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((UInt32)obj).ToString(this.formatProvider);
+            return ((uint)obj).ToString(this.formatProvider);
         }
     }
 }

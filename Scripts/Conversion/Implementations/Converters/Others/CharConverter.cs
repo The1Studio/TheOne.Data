@@ -4,7 +4,7 @@ namespace UniT.Data.Conversion
     using System;
     using UnityEngine.Scripting;
 
-    public sealed class CharConverter : Converter<Char>
+    public sealed class CharConverter : Converter<char>
     {
         [Preserve]
         public CharConverter()
@@ -13,7 +13,7 @@ namespace UniT.Data.Conversion
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Char.Parse(str);
+            return char.Parse(str);
         }
 
         protected override string ConvertToString(object obj, Type type)

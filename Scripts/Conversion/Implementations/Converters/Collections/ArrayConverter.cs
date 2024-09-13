@@ -11,9 +11,9 @@ namespace UniT.Data.Conversion
         private readonly string separator;
 
         [Preserve]
-        public ArrayConverter(string separator = ";")
+        public ArrayConverter(SeparatorConfig config)
         {
-            this.separator = separator;
+            this.separator = config.CollectionSeparator;
         }
 
         protected override object ConvertFromString(string str, Type type)

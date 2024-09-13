@@ -2,14 +2,11 @@
 #nullable enable
 namespace UniT.Data.Serialization.DI
 {
-    using System;
-    using System.Collections.Generic;
     using UniT.DI;
-    using UniT.Extensions;
 
     public static class SerializationDI
     {
-        public static void AddSerializers(this DependencyContainer container, IEnumerable<Type>? serializersTypes = null)
+        public static void AddSerializers(this DependencyContainer container)
         {
             container.AddInterfacesAndSelf<ObjectSerializer>();
             #if UNIT_JSON
@@ -18,12 +15,6 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_CSV
             container.AddInterfacesAndSelf<CsvSerializer>();
             #endif
-
-            serializersTypes?.ForEach(type =>
-            {
-                if (!typeof(ISerializer).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(ISerializer)}");
-                container.AddInterfacesAndSelf(type);
-            });
         }
     }
 }

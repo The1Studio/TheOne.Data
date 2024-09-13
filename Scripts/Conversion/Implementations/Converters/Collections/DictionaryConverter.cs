@@ -16,9 +16,9 @@ namespace UniT.Data.Conversion
         private readonly string separator;
 
         [Preserve]
-        public DictionaryConverter(string separator = ":")
+        public DictionaryConverter(SeparatorConfig config)
         {
-            this.separator = separator;
+            this.separator = config.KeyValueSeparator;
         }
 
         protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(Dictionary<,>));

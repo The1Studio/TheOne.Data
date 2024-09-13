@@ -2,27 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
-    public sealed class DoubleConverter : Converter<Double>
+    public sealed class DoubleConverter : Converter<double>
     {
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DoubleConverter(IFormatProvider? formatProvider = null)
+        public DoubleConverter(IFormatProvider formatProvider)
         {
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return Double.Parse(str, this.formatProvider);
+            return double.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((Double)obj).ToString(this.formatProvider);
+            return ((double)obj).ToString(this.formatProvider);
         }
     }
 }

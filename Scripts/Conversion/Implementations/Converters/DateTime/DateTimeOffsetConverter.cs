@@ -2,29 +2,26 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using System.Globalization;
     using UnityEngine.Scripting;
 
     public sealed class DateTimeOffsetConverter : Converter<DateTimeOffset>
     {
-        private readonly string          format;
         private readonly IFormatProvider formatProvider;
 
         [Preserve]
-        public DateTimeOffsetConverter(string format = "dd/MM/yyyy hh:mm:ss", IFormatProvider? formatProvider = null)
+        public DateTimeOffsetConverter(IFormatProvider formatProvider)
         {
-            this.format         = format;
-            this.formatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            this.formatProvider = formatProvider;
         }
 
         protected override object ConvertFromString(string str, Type type)
         {
-            return DateTimeOffset.ParseExact(str, this.format, this.formatProvider);
+            return DateTimeOffset.Parse(str, this.formatProvider);
         }
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return ((DateTimeOffset)obj).ToString(this.format, this.formatProvider);
+            return ((DateTimeOffset)obj).ToString(this.formatProvider);
         }
     }
 }

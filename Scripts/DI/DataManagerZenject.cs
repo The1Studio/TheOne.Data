@@ -3,7 +3,9 @@
 namespace UniT.Data.DI
 {
     using System;
-    using System.Collections.Generic;
+    using System.Globalization;
+    using CsvHelper.Configuration;
+    using Newtonsoft.Json;
     using UniT.Data.Conversion.DI;
     using UniT.Data.Serialization.DI;
     using UniT.Data.Storage.DI;
@@ -13,19 +15,50 @@ namespace UniT.Data.DI
 
     public static class DataManagerZenject
     {
-        public static void BindDataManager(
-            this DiContainer   container,
-            IEnumerable<Type>? converterTypes   = null,
-            IEnumerable<Type>? serializerTypes  = null,
-            IEnumerable<Type>? dataStorageTypes = null
-        )
+        public static void BindDataManager(this DiContainer container)
         {
             if (container.HasBinding<IDataManager>()) return;
             container.BindLoggerManager();
             container.BindAssetsManager();
-            container.BindConverterManager(converterTypes);
-            container.BindSerializers(serializerTypes);
-            container.BindDataStorages(dataStorageTypes);
+
+            #region Configs
+
+            if (!container.HasBinding<IFormatProvider>())
+            {
+                container.Bind<IFormatProvider>().FromMethod(() => CultureInfo.InvariantCulture).AsSingle();
+            }
+            if (!container.HasBinding<SeparatorConfig>())
+            {
+                container.Bind<SeparatorConfig>().FromMethod(() => new SeparatorConfig()).AsSingle();
+            }
+            #if UNIT_JSON
+            if (!container.HasBinding<JsonSerializerSettings>())
+            {
+                container.Bind<JsonSerializerSettings>().FromMethod(() => new JsonSerializerSettings
+                {
+                    Culture                = CultureInfo.InvariantCulture,
+                    TypeNameHandling       = TypeNameHandling.Auto,
+                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                }).AsSingle();
+            }
+            #endif
+            #if UNIT_CSV
+            if (!container.HasBinding<CsvConfiguration>())
+            {
+                container.Bind<CsvConfiguration>().FromMethod(() => new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    MissingFieldFound     = null,
+                    PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
+                }).AsSingle();
+            }
+            #endif
+
+            #endregion
+
+            container.BindConverterManager();
+            container.BindSerializers();
+            container.BindDataStorages();
             container.BindInterfacesTo<DataManager>().AsSingle();
         }
     }

@@ -2,25 +2,16 @@
 #nullable enable
 namespace UniT.Data.Storage.DI
 {
-    using System;
-    using System.Collections.Generic;
-    using UniT.Extensions;
     using Zenject;
 
     public static class StorageZenject
     {
-        public static void BindDataStorages(this DiContainer container, IEnumerable<Type>? dataStorageTypes = null)
+        public static void BindDataStorages(this DiContainer container)
         {
             container.BindInterfacesAndSelfTo<AssetBinaryDataStorage>().AsSingle();
             container.BindInterfacesAndSelfTo<AssetTextDataStorage>().AsSingle();
             container.BindInterfacesAndSelfTo<AssetBlobDataStorage>().AsSingle();
             container.BindInterfacesAndSelfTo<PlayerPrefsDataStorage>().AsSingle();
-
-            dataStorageTypes?.ForEach(type =>
-            {
-                if (!typeof(IDataStorage).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IDataStorage)}");
-                container.BindInterfacesAndSelfTo(type).AsSingle();
-            });
         }
     }
 }

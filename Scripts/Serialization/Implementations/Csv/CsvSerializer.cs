@@ -5,7 +5,6 @@ namespace UniT.Data.Serialization
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -21,15 +20,10 @@ namespace UniT.Data.Serialization
         private readonly CsvConfiguration  configuration;
 
         [Preserve]
-        public CsvSerializer(IConverterManager converterManager, CsvConfiguration? configuration = null)
+        public CsvSerializer(IConverterManager converterManager, CsvConfiguration configuration)
         {
             this.converterManager = converterManager;
-            this.configuration = configuration
-                ?? new CsvConfiguration(CultureInfo.InvariantCulture)
-                {
-                    MissingFieldFound     = null,
-                    PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
-                };
+            this.configuration    = configuration;
         }
 
         protected override ICsvData Deserialize(Type type, string rawData)

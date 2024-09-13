@@ -2,14 +2,11 @@
 #nullable enable
 namespace UniT.Data.Conversion.DI
 {
-    using System;
-    using System.Collections.Generic;
-    using UniT.Extensions;
     using VContainer;
 
     public static class ConverterManagerVContainer
     {
-        public static void RegisterConverterManager(this IContainerBuilder builder, IEnumerable<Type>? converterTypes = null)
+        public static void RegisterConverterManager(this IContainerBuilder builder)
         {
             #region Converters
 
@@ -67,19 +64,13 @@ namespace UniT.Data.Conversion.DI
             #region Collections
 
             builder.Register<ArrayConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<ListAndReadOnlyCollectionConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depend on ArrayConverter
-            builder.Register<GenericCollectionConverter>(Lifetime.Singleton).AsImplementedInterfaces();         // Depend on ArrayConverter
-            builder.Register<DictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces();                // Depend on ArrayConverter
-            builder.Register<ReadOnlyDictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces();        // Depend on DictionaryConverter
-            builder.Register<GenericDictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces();         // Depend on DictionaryConverter
+            builder.Register<CollectionConverter>(Lifetime.Singleton).AsImplementedInterfaces();         // Depend on ArrayConverter
+            builder.Register<AbstractCollectionConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depend on ArrayConverter
+            builder.Register<DictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces();         // Depend on ArrayConverter
+            builder.Register<ReadOnlyDictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depend on DictionaryConverter
+            builder.Register<AbstractDictionaryConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depend on DictionaryConverter
 
             #endregion
-
-            converterTypes?.ForEach(type =>
-            {
-                if (!typeof(IConverter).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IConverter)}");
-                builder.Register(type, Lifetime.Singleton).AsImplementedInterfaces();
-            });
 
             #endregion
 

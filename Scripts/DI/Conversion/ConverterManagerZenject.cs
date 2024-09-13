@@ -2,14 +2,11 @@
 #nullable enable
 namespace UniT.Data.Conversion.DI
 {
-    using System;
-    using System.Collections.Generic;
-    using UniT.Extensions;
     using Zenject;
 
     public static class ConverterManagerZenject
     {
-        public static void BindConverterManager(this DiContainer container, IEnumerable<Type>? converterTypes = null)
+        public static void BindConverterManager(this DiContainer container)
         {
             #region Converters
 
@@ -67,19 +64,13 @@ namespace UniT.Data.Conversion.DI
             #region Collections
 
             container.BindInterfacesTo<ArrayConverter>().AsSingle();
-            container.BindInterfacesTo<ListAndReadOnlyCollectionConverter>().AsSingle(); // Depend on ArrayConverter
-            container.BindInterfacesTo<GenericCollectionConverter>().AsSingle();         // Depend on ArrayConverter
-            container.BindInterfacesTo<DictionaryConverter>().AsSingle();                // Depend on ArrayConverter
-            container.BindInterfacesTo<ReadOnlyDictionaryConverter>().AsSingle();        // Depend on DictionaryConverter
-            container.BindInterfacesTo<GenericDictionaryConverter>().AsSingle();         // Depend on DictionaryConverter
+            container.BindInterfacesTo<CollectionConverter>().AsSingle();         // Depend on ArrayConverter
+            container.BindInterfacesTo<AbstractCollectionConverter>().AsSingle(); // Depend on ArrayConverter
+            container.BindInterfacesTo<DictionaryConverter>().AsSingle();         // Depend on ArrayConverter
+            container.BindInterfacesTo<ReadOnlyDictionaryConverter>().AsSingle(); // Depend on DictionaryConverter
+            container.BindInterfacesTo<AbstractDictionaryConverter>().AsSingle(); // Depend on DictionaryConverter
 
             #endregion
-
-            converterTypes?.ForEach(type =>
-            {
-                if (!typeof(IConverter).IsAssignableFrom(type)) throw new ArgumentException($"{type} does not implement {nameof(IConverter)}");
-                container.BindInterfacesTo(type).AsSingle();
-            });
 
             #endregion
 

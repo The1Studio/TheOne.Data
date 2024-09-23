@@ -23,13 +23,13 @@ namespace UniT.Data.DI
 
             #region Configs
 
-            if (!container.Contains<SeparatorConfig>())
-            {
-                container.Add(new SeparatorConfig());
-            }
             if (!container.Contains<IFormatProvider>())
             {
                 container.Add((IFormatProvider)CultureInfo.InvariantCulture);
+            }
+            if (!container.Contains<SeparatorConfig>())
+            {
+                container.Add(new SeparatorConfig());
             }
             #if UNIT_JSON
             if (!container.Contains<JsonSerializerSettings>())

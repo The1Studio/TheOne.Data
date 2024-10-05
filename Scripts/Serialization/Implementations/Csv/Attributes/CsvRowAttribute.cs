@@ -24,7 +24,7 @@ namespace UniT.Data.Serialization
         {
             return type.GetCustomAttribute<CsvRowAttribute>() is { } attr
                 ? (attr.Prefix, attr.Key)
-                : ("", null);
+                : (string.Empty, null);
         }
     }
 }

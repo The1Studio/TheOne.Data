@@ -4,14 +4,18 @@ namespace UniT.Data.DI
 {
     using System;
     using System.Globalization;
-    using CsvHelper.Configuration;
-    using Newtonsoft.Json;
     using UniT.Data.Conversion.DI;
     using UniT.Data.Serialization.DI;
     using UniT.Data.Storage.DI;
     using UniT.Logging.DI;
     using UniT.ResourceManagement.DI;
     using VContainer;
+    #if UNIT_JSON
+    using Newtonsoft.Json;
+    #endif
+    #if UNIT_CSV
+    using CsvHelper.Configuration;
+    #endif
 
     public static class DataManagerVContainer
     {

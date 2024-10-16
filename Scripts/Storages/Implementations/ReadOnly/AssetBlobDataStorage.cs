@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public sealed class AssetBlobDataStorage : IReadableDataStorage
+    public sealed class AssetBlobDataStorage : ReadOnlyDataStorage<object>
     {
         private readonly IAssetsManager assetsManager;
 
@@ -22,23 +22,19 @@ namespace UniT.Data.Storage
             this.assetsManager = assetsManager;
         }
 
-        public Type RawDataType => typeof(Object);
-
-        bool IDataStorage.CanStore(Type type) => typeof(IReadableData).IsAssignableFrom(type) && !typeof(IWritableData).IsAssignableFrom(type);
-
-        object IReadableDataStorage.Read(string key)
+        protected override object? Read(string key)
         {
             return this.assetsManager.Load<Object>(key);
         }
 
         #if UNIT_UNITASK
-        UniTask<object?> IReadableDataStorage.ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        protected override UniTask<object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.assetsManager.LoadAsync<Object>(key, progress, cancellationToken)
                 .ContinueWith(asset => (object?)asset);
         }
         #else
-        IEnumerator IReadableDataStorage.ReadAsync(string key, Action<object> callback, IProgress<float>? progress)
+        protected override IEnumerator ReadAsync(string key, Action<object?> callback, IProgress<float>? progress)
         {
             return this.assetsManager.LoadAsync<Object>(key, callback, progress);
         }

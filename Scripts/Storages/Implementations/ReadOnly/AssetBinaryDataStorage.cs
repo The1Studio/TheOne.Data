@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public sealed class AssetBinaryDataStorage : IReadableDataStorage
+    public sealed class AssetBinaryDataStorage : ReadOnlyDataStorage<byte[]>
     {
         private readonly IAssetsManager assetsManager;
 
@@ -22,30 +22,26 @@ namespace UniT.Data.Storage
             this.assetsManager = assetsManager;
         }
 
-        public Type RawDataType => typeof(byte[]);
-
-        bool IDataStorage.CanStore(Type type) => typeof(IReadableData).IsAssignableFrom(type) && !typeof(IWritableData).IsAssignableFrom(type);
-
-        object? IReadableDataStorage.Read(string key)
+        protected override byte[]? Read(string key)
         {
             var bytes = this.assetsManager.Load<TextAsset>(key).bytes;
             this.assetsManager.Unload(key);
-            return bytes.Length > 0 ? bytes : default(object);
+            return bytes.Length > 0 ? bytes : null;
         }
 
         #if UNIT_UNITASK
-        UniTask<object?> IReadableDataStorage.ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        protected override UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.assetsManager.LoadAsync<TextAsset>(key, progress, cancellationToken)
                 .ContinueWith(asset =>
                 {
                     var bytes = asset.bytes;
                     this.assetsManager.Unload(key);
-                    return bytes.Length > 0 ? bytes : default(object);
+                    return bytes.Length > 0 ? bytes : null;
                 });
         }
         #else
-        IEnumerator IReadableDataStorage.ReadAsync(string key, Action<object?> callback, IProgress<float>? progress)
+        protected override IEnumerator ReadAsync(string key, Action<byte[]?> callback, IProgress<float>? progress)
         {
             return this.assetsManager.LoadAsync<TextAsset>(
                 key,
@@ -53,7 +49,7 @@ namespace UniT.Data.Storage
                 {
                     var bytes = asset.bytes;
                     this.assetsManager.Unload(key);
-                    callback(bytes.Length > 0 ? bytes : default(object));
+                    callback(bytes.Length > 0 ? bytes : null);
                 },
                 progress
             );

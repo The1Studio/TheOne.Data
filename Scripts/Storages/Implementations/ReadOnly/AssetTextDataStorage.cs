@@ -13,7 +13,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public sealed class AssetTextDataStorage : IReadableDataStorage
+    public sealed class AssetTextDataStorage : ReadOnlyDataStorage<string>
     {
         private readonly IAssetsManager assetsManager;
 
@@ -23,11 +23,7 @@ namespace UniT.Data.Storage
             this.assetsManager = assetsManager;
         }
 
-        public Type RawDataType => typeof(string);
-
-        bool IDataStorage.CanStore(Type type) => typeof(IReadableData).IsAssignableFrom(type) && !typeof(IWritableData).IsAssignableFrom(type);
-
-        object? IReadableDataStorage.Read(string key)
+        protected override string? Read(string key)
         {
             var text = this.assetsManager.Load<TextAsset>(key).text;
             this.assetsManager.Unload(key);
@@ -35,18 +31,18 @@ namespace UniT.Data.Storage
         }
 
         #if UNIT_UNITASK
-        UniTask<object?> IReadableDataStorage.ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        protected override UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.assetsManager.LoadAsync<TextAsset>(key, progress, cancellationToken)
                 .ContinueWith(asset =>
                 {
                     var text = asset.text;
                     this.assetsManager.Unload(key);
-                    return (object?)text.NullIfWhitespace();
+                    return text.NullIfWhitespace();
                 });
         }
         #else
-        IEnumerator IReadableDataStorage.ReadAsync(string key, Action<object?> callback, IProgress<float>? progress)
+        protected override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
         {
             return this.assetsManager.LoadAsync<TextAsset>(
                 key,

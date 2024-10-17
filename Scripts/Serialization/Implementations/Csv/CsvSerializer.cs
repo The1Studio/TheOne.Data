@@ -86,7 +86,7 @@ namespace UniT.Data.Serialization
                 this.rowConstructor              = rowType.GetEmptyConstructor();
                 var (prefix, key)                = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
-                this.keyField                    = key.IsNullOrWhitespace() ? normalFields.First() : normalFields.First(field => field.Name == key);
+                this.keyField                    = normalFields.First(field => key.IsNullOrWhitespace() || field.Name == key);
                 this.normalFields = normalFields
                     .Select(field =>
                     {

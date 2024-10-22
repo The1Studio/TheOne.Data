@@ -18,7 +18,7 @@ namespace UniT.Data.Serialization
             this.HasValue = true;
         }
 
-        IEnumerator ICsvData.GetEnumerator() { yield return this; }
+        IEnumerator ICsvData.GetValues() { yield return this; }
 
         [field: CsvIgnore] public bool HasValue { get; private set; }
     }
@@ -33,7 +33,7 @@ namespace UniT.Data.Serialization
             this.HasValue = true;
         }
 
-        IEnumerator ICsvData.GetEnumerator() { yield return this; }
+        IEnumerator ICsvData.GetValues() { yield return this; }
 
         [field: CsvIgnore] public bool HasValue { get; private set; }
     }
@@ -49,7 +49,7 @@ namespace UniT.Data.Serialization
 
         void ICsvData.Add(object key, object value) => this.list.Add((T)value);
 
-        IEnumerator ICsvData.GetEnumerator() => this.list.GetEnumerator();
+        IEnumerator ICsvData.GetValues() => this.list.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.list.GetEnumerator();
 
@@ -73,7 +73,7 @@ namespace UniT.Data.Serialization
 
         void ICsvData.Add(object key, object value) => this.dictionary.Add((TKey)key, (TValue)value);
 
-        IEnumerator ICsvData.GetEnumerator() => this.dictionary.Values.GetEnumerator();
+        IEnumerator ICsvData.GetValues() => this.dictionary.Values.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.dictionary.GetEnumerator();
 

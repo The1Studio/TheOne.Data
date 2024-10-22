@@ -86,7 +86,7 @@ namespace UniT.Data.Serialization
                 this.rowConstructor              = rowType.GetEmptyConstructor();
                 var (prefix, key)                = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
-                this.keyField                    = normalFields.First(field => key.IsNullOrWhitespace() || field.Name == key);
+                this.keyField                    = normalFields.FirstOrDefault(field => key.IsNullOrWhitespace() || field.GetCsvColumn(prefix) == key) ?? throw new InvalidOperationException($"{rowType.Name} has no field {key}");
                 this.normalFields = normalFields
                     .Select(field =>
                     {
@@ -159,8 +159,7 @@ namespace UniT.Data.Serialization
             public Serializer(IConverterManager converterManager, ICsvData data, CsvWriter writer)
             {
                 this.converterManager = converterManager;
-                // ReSharper disable once NotDisposedResource
-                this.data   = data.GetEnumerator();
+                this.data   = data.GetValues();
                 this.writer = writer;
                 var rowType = data.RowType;
                 var (prefix, _)                  = rowType.GetCsvRow();

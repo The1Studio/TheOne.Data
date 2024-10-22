@@ -11,7 +11,7 @@ namespace UniT.Data.Serialization
 
         public void Add(object key, object value);
 
-        public IEnumerator GetEnumerator();
+        public IEnumerator GetValues();
     }
 }
 #endif

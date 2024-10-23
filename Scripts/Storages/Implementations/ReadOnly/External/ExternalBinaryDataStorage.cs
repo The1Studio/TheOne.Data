@@ -1,15 +1,15 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
     using System.IO;
     using UnityEngine.Scripting;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
     using System.Collections;
-    using UniT.Extensions;
+    using TheOne.Extensions;
     #endif
 
     public sealed class ExternalBinaryDataStorage : ReadOnlyDataStorage<byte[]>
@@ -27,7 +27,7 @@ namespace UniT.Data.Storage
             return File.ReadAllBytes(this.externalFileVersionManager.GetFilePath(key));
         }
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         protected override async UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return await File.ReadAllBytesAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);

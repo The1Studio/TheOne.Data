@@ -1,33 +1,33 @@
 {
-  "name": "UniT.Data",
-  "rootNamespace": "UniT.Data",
+  "name": "TheOne.Data",
+  "rootNamespace": "TheOne.Data",
   "references": [
-    "UniT.Extensions",
-    "UniT.Logging",
-    "UniT.ResourceManagement",
-    "UniT.FbInstant",
+    "TheOne.Extensions",
+    "TheOne.Logging",
+    "TheOne.ResourceManagement",
+    "TheOne.FbInstant",
     "UniTask"
   ],
   "versionDefines": [
     {
       "name": "com.cysharp.unitask",
       "expression": "",
-      "define": "UNIT_UNITASK"
+      "define": "THEONE_UNITASK"
     },
     {
       "name": "com.unity.nuget.newtonsoft-json",
       "expression": "",
-      "define": "UNIT_JSON"
+      "define": "THEONE_JSON"
     },
     {
       "name": "org.nuget.csvhelper",
       "expression": "",
-      "define": "UNIT_CSV"
+      "define": "THEONE_CSV"
     },
     {
-      "name": "com.frostbun.unit.fbinstant",
+      "name": "com.theone.fbinstant",
       "expression": "",
-      "define": "UNIT_FBINSTANT"
+      "define": "THEONE_FBINSTANT"
     }
   ]
 }

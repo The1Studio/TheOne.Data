@@ -1,11 +1,11 @@
 #nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    using UniT.ResourceManagement;
+    using TheOne.ResourceManagement;
     using UnityEngine.Scripting;
     using Object = UnityEngine.Object;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -27,7 +27,7 @@ namespace UniT.Data.Storage
             return this.assetsManager.Load<Object>(key);
         }
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         protected override UniTask<object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.assetsManager.LoadAsync<Object>(key, progress, cancellationToken)

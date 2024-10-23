@@ -1,13 +1,13 @@
 ﻿#nullable enable
-namespace UniT.Data.Serialization
+namespace TheOne.Data.Serialization
 {
     using System;
     using System.Threading;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using Cysharp.Threading.Tasks;
     #else
     using System.Collections;
-    using UniT.Extensions;
+    using TheOne.Extensions;
     #endif
 
     public abstract class Serializer<TRawData, TData> : ISerializer where TRawData : notnull where TData : IData
@@ -24,7 +24,7 @@ namespace UniT.Data.Serialization
 
         protected abstract TRawData Serialize(TData data);
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         UniTask<IData> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken) => this.DeserializeAsync(type, (TRawData)rawData, cancellationToken).ContinueWith(data => (IData)data);
 
         UniTask<object> ISerializer.SerializeAsync(IData data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);

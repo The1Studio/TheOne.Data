@@ -1,18 +1,18 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.DI
+namespace TheOne.Data.DI
 {
     using System;
     using System.Globalization;
-    using UniT.Data.Conversion.DI;
-    using UniT.Data.Serialization.DI;
-    using UniT.Data.Storage.DI;
-    using UniT.Logging.DI;
+    using TheOne.Data.Conversion.DI;
+    using TheOne.Data.Serialization.DI;
+    using TheOne.Data.Storage.DI;
+    using TheOne.Logging.DI;
     using Zenject;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
 
@@ -39,7 +39,7 @@ namespace UniT.Data.DI
             {
                 container.Bind<SeparatorConfig>().FromMethod(() => new SeparatorConfig()).AsSingle();
             }
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
                 container.Bind<JsonSerializerSettings>().FromMethod(() => new JsonSerializerSettings
@@ -51,7 +51,7 @@ namespace UniT.Data.DI
                 }).AsSingle();
             }
             #endif
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!container.HasBinding<CsvConfiguration>())
             {
                 container.Bind<CsvConfiguration>().FromMethod(() => new CsvConfiguration(CultureInfo.InvariantCulture)

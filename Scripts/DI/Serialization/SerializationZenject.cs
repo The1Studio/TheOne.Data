@@ -1,6 +1,6 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using Zenject;
 
@@ -9,10 +9,10 @@ namespace UniT.Data.Serialization.DI
         public static void BindSerializers(this DiContainer container)
         {
             container.BindInterfacesAndSelfTo<ObjectSerializer>().AsSingle();
-            #if UNIT_JSON
+            #if THEONE_JSON
             container.BindInterfacesAndSelfTo<JsonSerializer>().AsSingle();
             #endif
-            #if UNIT_CSV
+            #if THEONE_CSV
             container.BindInterfacesAndSelfTo<CsvSerializer>().AsSingle();
             #endif
         }

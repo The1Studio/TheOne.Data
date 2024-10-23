@@ -1,8 +1,8 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
-    using UniT.DI;
+    using TheOne.DI;
 
     public static class ConverterManagerDI
     {
@@ -10,7 +10,7 @@ namespace UniT.Data.Conversion.DI
         {
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             container.AddInterfaces<JsonConverter>();
             #endif
 

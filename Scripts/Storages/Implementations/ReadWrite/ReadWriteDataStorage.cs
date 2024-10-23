@@ -1,8 +1,8 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -31,7 +31,7 @@ namespace UniT.Data.Storage
 
         #region Async
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         UniTask<object?> IReadableDataStorage.ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken) => this.ReadAsync(key, progress, cancellationToken).ContinueWith(rawData => (object?)rawData);
 
         UniTask IWritableDataStorage.WriteAsync(string key, object value, IProgress<float>? progress, CancellationToken cancellationToken) => this.WriteAsync(key, (TRawData)value, progress, cancellationToken);

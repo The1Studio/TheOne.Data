@@ -1,8 +1,8 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.Storage.DI
+namespace TheOne.Data.Storage.DI
 {
-    using UniT.ResourceManagement.DI;
+    using TheOne.ResourceManagement.DI;
     using Zenject;
 
     public static class StorageZenject

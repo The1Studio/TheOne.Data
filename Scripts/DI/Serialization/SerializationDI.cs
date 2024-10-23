@@ -1,18 +1,18 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
-    using UniT.DI;
+    using TheOne.DI;
 
     public static class SerializationDI
     {
         public static void AddSerializers(this DependencyContainer container)
         {
             container.AddInterfacesAndSelf<ObjectSerializer>();
-            #if UNIT_JSON
+            #if THEONE_JSON
             container.AddInterfacesAndSelf<JsonSerializer>();
             #endif
-            #if UNIT_CSV
+            #if THEONE_CSV
             container.AddInterfacesAndSelf<CsvSerializer>();
             #endif
         }

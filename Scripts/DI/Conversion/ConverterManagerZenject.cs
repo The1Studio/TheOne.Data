@@ -1,6 +1,6 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
     using Zenject;
 
@@ -10,7 +10,7 @@ namespace UniT.Data.Conversion.DI
         {
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             container.BindInterfacesTo<JsonConverter>().AsSingle();
             #endif
 

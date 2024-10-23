@@ -1,6 +1,6 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using VContainer;
 
@@ -9,10 +9,10 @@ namespace UniT.Data.Serialization.DI
         public static void RegisterSerializers(this IContainerBuilder builder)
         {
             builder.Register<ObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
-            #if UNIT_JSON
+            #if THEONE_JSON
             builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
-            #if UNIT_CSV
+            #if THEONE_CSV
             builder.Register<CsvSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
         }

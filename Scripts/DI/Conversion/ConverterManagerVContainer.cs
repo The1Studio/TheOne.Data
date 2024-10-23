@@ -1,6 +1,6 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
     using VContainer;
 
@@ -12,7 +12,7 @@ namespace UniT.Data.Conversion.DI
 
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             builder.Register<JsonConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 

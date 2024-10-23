@@ -1,8 +1,8 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using UnityEngine.Scripting;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -14,7 +14,7 @@ namespace UniT.Data.Storage
     {
         public string GetFilePath(string name);
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<string> GetFilePathAsync(string name, CancellationToken cancellationToken = default);
         #else
         public IEnumerator GetFilePathAsync(string name, Action<string> callback);

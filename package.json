@@ -1,6 +1,6 @@
 {
-  "name": "com.frostbun.unit.data",
-  "displayName": "UniT Data",
+  "name": "com.theone.data",
+  "displayName": "TheOne Data",
   "description": "Data Manager for Unity",
   "version": "1.1.5",
   "unity": "2022.3",
@@ -11,8 +11,8 @@
     "url": "https://github.com/frostbun"
   },
   "dependencies": {
-    "com.frostbun.unit.extensions": "1.1.22",
-    "com.frostbun.unit.logging": "1.1.0",
-    "com.frostbun.unit.resourcemanagement": "1.1.3"
+    "com.theone.extensions": "1.1.22",
+    "com.theone.logging": "1.1.0",
+    "com.theone.resourcemanagement": "1.1.3"
   }
 }

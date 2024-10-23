@@ -1,11 +1,11 @@
 #nullable enable
-namespace UniT.Data
+namespace TheOne.Data
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Extensions;
-    #if UNIT_UNITASK
+    using TheOne.Extensions;
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -130,7 +130,7 @@ namespace UniT.Data
 
         #region Async
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<object[]> LoadAsync(string[] keys, Type[] types, bool cache = true, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public UniTask SaveAsync(string[] keys, IProgress<float>? progress = null, CancellationToken cancellationToken = default);

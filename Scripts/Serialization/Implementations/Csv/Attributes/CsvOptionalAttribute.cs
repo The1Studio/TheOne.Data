@@ -1,6 +1,6 @@
-#if UNIT_CSV
+#if THEONE_CSV
 #nullable enable
-namespace UniT.Data
+namespace TheOne.Data
 {
     using System;
     using System.Reflection;

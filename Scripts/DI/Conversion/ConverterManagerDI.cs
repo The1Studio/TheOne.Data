@@ -1,11 +1,11 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
     using System;
     using System.Globalization;
-    using UniT.DI;
-    #if UNIT_JSON
+    using TheOne.DI;
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonConverter = JsonConverter;
     #endif
@@ -31,7 +31,7 @@ namespace UniT.Data.Conversion.DI
 
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.Contains<JsonSerializerSettings>())
             {
                 container.Add(DefaultJsonSerializerSettings.Value);

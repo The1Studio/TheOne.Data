@@ -1,8 +1,8 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -13,7 +13,7 @@ namespace UniT.Data.Storage
     {
         public string? GetFilePath(string name);
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<string?> GetFilePathAsync(string name, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
         #else
         public IEnumerator GetFilePathAsync(string name, Action<string?> callback, IProgress<float>? progress = null);
@@ -22,7 +22,7 @@ namespace UniT.Data.Storage
 
     public interface IExternalFileVersionManagerConfig
     {
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<string> FetchVersionAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public UniTask DownloadFileAsync(string version, string savePath, IProgress<float>? progress = null, CancellationToken cancellationToken = default);

@@ -1,9 +1,9 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Storage.DI
+namespace TheOne.Data.Storage.DI
 {
-    using UniT.DI;
-    using UniT.ResourceManagement.DI;
+    using TheOne.DI;
+    using TheOne.ResourceManagement.DI;
 
     public static class StorageDI
     {

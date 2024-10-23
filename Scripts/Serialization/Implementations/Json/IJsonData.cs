@@ -1,6 +1,6 @@
-#if UNIT_JSON
+#if THEONE_JSON
 #nullable enable
-namespace UniT.Data
+namespace TheOne.Data
 {
     public interface IJsonData
     {

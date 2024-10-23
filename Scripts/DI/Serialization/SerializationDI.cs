@@ -1,14 +1,14 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using System.Globalization;
-    using UniT.DI;
-    #if UNIT_JSON
+    using TheOne.DI;
+    #if THEONE_JSON
     using Newtonsoft.Json;
-    using JsonSerializer = UniT.Data.Serialization.JsonSerializer;
+    using JsonSerializer = TheOne.Data.Serialization.JsonSerializer;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
 
@@ -18,7 +18,7 @@ namespace UniT.Data.Serialization.DI
         {
             container.AddInterfacesAndSelf<ObjectSerializer>();
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.Contains<JsonSerializerSettings>())
             {
                 container.Add(new JsonSerializerSettings
@@ -32,7 +32,7 @@ namespace UniT.Data.Serialization.DI
             container.AddInterfacesAndSelf<JsonSerializer>();
             #endif
 
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!container.Contains<CsvConfiguration>())
             {
                 container.Add(new CsvConfiguration(CultureInfo.InvariantCulture)

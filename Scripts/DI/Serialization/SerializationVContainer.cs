@@ -1,14 +1,14 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using System.Globalization;
     using VContainer;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
-    using JsonSerializer = UniT.Data.Serialization.JsonSerializer;
+    using JsonSerializer = TheOne.Data.Serialization.JsonSerializer;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
 
@@ -18,7 +18,7 @@ namespace UniT.Data.Serialization.DI
         {
             builder.Register<ObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
                 builder.Register(_ => new JsonSerializerSettings
@@ -32,7 +32,7 @@ namespace UniT.Data.Serialization.DI
             builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
 
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!builder.Exists(typeof(CsvConfiguration)))
             {
                 builder.Register(_ => new CsvConfiguration(CultureInfo.InvariantCulture)

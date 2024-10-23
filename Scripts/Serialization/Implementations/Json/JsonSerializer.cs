@@ -1,6 +1,6 @@
-#if UNIT_JSON
+#if THEONE_JSON
 #nullable enable
-namespace UniT.Data.Serialization
+namespace TheOne.Data.Serialization
 {
     using System;
     using Newtonsoft.Json;

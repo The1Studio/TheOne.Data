@@ -1,10 +1,10 @@
-#if UNIT_CSV
+#if THEONE_CSV
 #nullable enable
-namespace UniT.Data
+namespace TheOne.Data
 {
     using System;
     using System.Reflection;
-    using UniT.Extensions;
+    using TheOne.Extensions;
 
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvColumnAttribute : Attribute

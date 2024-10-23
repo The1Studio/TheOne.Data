@@ -1,8 +1,8 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -17,7 +17,7 @@ namespace UniT.Data.Storage
 
         public object? Read(string key);
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<object?> ReadAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
         #else
         public IEnumerator ReadAsync(string key, Action<object?> callback, IProgress<float>? progress = null);

@@ -1,11 +1,11 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.DI
+namespace TheOne.Data.DI
 {
-    using UniT.Data.Conversion.DI;
-    using UniT.Data.Serialization.DI;
-    using UniT.Data.Storage.DI;
-    using UniT.Logging.DI;
+    using TheOne.Data.Conversion.DI;
+    using TheOne.Data.Serialization.DI;
+    using TheOne.Data.Storage.DI;
+    using TheOne.Logging.DI;
     using Zenject;
 
     public static class DataManagerZenject

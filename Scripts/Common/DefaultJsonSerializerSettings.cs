@@ -1,6 +1,6 @@
-#if UNIT_JSON
+#if THEONE_JSON
 #nullable enable
-namespace UniT.Data
+namespace TheOne.Data
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace UniT.Data
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Newtonsoft.Json.Serialization;
-    using UniT.Extensions;
+    using TheOne.Extensions;
 
     public static class DefaultJsonSerializerSettings
     {

@@ -1,6 +1,6 @@
-#if UNIT_MESSAGEPACK
+#if THEONE_MESSAGEPACK
 #nullable enable
-namespace UniT.Data.Serialization
+namespace TheOne.Data.Serialization
 {
     using System;
     using System.Reflection;

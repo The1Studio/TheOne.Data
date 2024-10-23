@@ -1,12 +1,12 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.DI
+namespace TheOne.Data.DI
 {
-    using UniT.Data.Conversion.DI;
-    using UniT.Data.Serialization.DI;
-    using UniT.Data.Storage.DI;
-    using UniT.DI;
-    using UniT.Logging.DI;
+    using TheOne.Data.Conversion.DI;
+    using TheOne.Data.Serialization.DI;
+    using TheOne.Data.Storage.DI;
+    using TheOne.DI;
+    using TheOne.Logging.DI;
 
     public static class DataManagerDI
     {

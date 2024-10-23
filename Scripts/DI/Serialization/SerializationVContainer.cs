@@ -1,21 +1,21 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using System.Globalization;
     using VContainer;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonSerializer = JsonSerializer;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
-    #if UNIT_MEMORYPACK
+    #if THEONE_MEMORYPACK
     using MemoryPack;
     using MemoryPackSerializer = MemoryPackSerializer;
     #endif
-    #if UNIT_MESSAGEPACK
+    #if THEONE_MESSAGEPACK
     using MessagePack;
     using MessagePackSerializer = MessagePackSerializer;
     #endif
@@ -24,7 +24,7 @@ namespace UniT.Data.Serialization.DI
     {
         public static void RegisterSerializers(this IContainerBuilder builder)
         {
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
                 builder.RegisterInstance(DefaultJsonSerializerSettings.Value);
@@ -34,7 +34,7 @@ namespace UniT.Data.Serialization.DI
 
             builder.Register<UnityObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!builder.Exists(typeof(CsvConfiguration)))
             {
                 builder.RegisterInstance(new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -46,7 +46,7 @@ namespace UniT.Data.Serialization.DI
             builder.Register<CsvSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
 
-            #if UNIT_MEMORYPACK
+            #if THEONE_MEMORYPACK
             if (!builder.Exists(typeof(MemoryPackSerializerOptions)))
             {
                 builder.RegisterInstance(MemoryPackSerializerOptions.Default);
@@ -54,7 +54,7 @@ namespace UniT.Data.Serialization.DI
             builder.Register<MemoryPackSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
 
-            #if UNIT_MESSAGEPACK
+            #if THEONE_MESSAGEPACK
             if (!builder.Exists(typeof(MessagePackSerializerOptions)))
             {
                 builder.RegisterInstance(MessagePackSerializerOptions.Standard);

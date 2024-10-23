@@ -1,11 +1,11 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
     using System;
     using System.Globalization;
     using VContainer;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonConverter = JsonConverter;
     #endif
@@ -31,7 +31,7 @@ namespace UniT.Data.Conversion.DI
 
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
                 builder.RegisterInstance(DefaultJsonSerializerSettings.Value);

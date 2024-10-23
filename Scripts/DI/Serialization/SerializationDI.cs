@@ -1,21 +1,21 @@
-﻿#if UNIT_DI
+﻿#if THEONE_DI
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using System.Globalization;
-    using UniT.DI;
-    #if UNIT_JSON
+    using TheOne.DI;
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonSerializer = JsonSerializer;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
-    #if UNIT_MEMORYPACK
+    #if THEONE_MEMORYPACK
     using MemoryPack;
     using MemoryPackSerializer = MemoryPackSerializer;
     #endif
-    #if UNIT_MESSAGEPACK
+    #if THEONE_MESSAGEPACK
     using MessagePack;
     using MessagePackSerializer = MessagePackSerializer;
     #endif
@@ -24,7 +24,7 @@ namespace UniT.Data.Serialization.DI
     {
         public static void AddSerializers(this DependencyContainer container)
         {
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.Contains<JsonSerializerSettings>())
             {
                 container.Add(DefaultJsonSerializerSettings.Value);
@@ -34,7 +34,7 @@ namespace UniT.Data.Serialization.DI
 
             container.AddInterfacesAndSelf<UnityObjectSerializer>();
 
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!container.Contains<CsvConfiguration>())
             {
                 container.Add(new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -46,7 +46,7 @@ namespace UniT.Data.Serialization.DI
             container.AddInterfacesAndSelf<CsvSerializer>();
             #endif
 
-            #if UNIT_MEMORYPACK
+            #if THEONE_MEMORYPACK
             if (!container.Contains<MemoryPackSerializerOptions>())
             {
                 container.Add(MemoryPackSerializerOptions.Default);
@@ -54,7 +54,7 @@ namespace UniT.Data.Serialization.DI
             container.AddInterfacesAndSelf<MemoryPackSerializer>();
             #endif
 
-            #if UNIT_MESSAGEPACK
+            #if THEONE_MESSAGEPACK
             if (!container.Contains<MessagePackSerializerOptions>())
             {
                 container.Add(MessagePackSerializerOptions.Standard);

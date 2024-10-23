@@ -1,8 +1,8 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -15,7 +15,7 @@ namespace UniT.Data.Storage
 
         public void Flush();
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask WriteAsync(string key, object value, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public UniTask FlushAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);

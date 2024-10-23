@@ -1,21 +1,21 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.Serialization.DI
+namespace TheOne.Data.Serialization.DI
 {
     using System.Globalization;
     using Zenject;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonSerializer = JsonSerializer;
     #endif
-    #if UNIT_CSV
+    #if THEONE_CSV
     using CsvHelper.Configuration;
     #endif
-    #if UNIT_MEMORYPACK
+    #if THEONE_MEMORYPACK
     using MemoryPack;
     using MemoryPackSerializer = MemoryPackSerializer;
     #endif
-    #if UNIT_MESSAGEPACK
+    #if THEONE_MESSAGEPACK
     using MessagePack;
     using MessagePackSerializer = MessagePackSerializer;
     #endif
@@ -24,7 +24,7 @@ namespace UniT.Data.Serialization.DI
     {
         public static void BindSerializers(this DiContainer container)
         {
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
                 container.BindInstance(DefaultJsonSerializerSettings.Value);
@@ -34,7 +34,7 @@ namespace UniT.Data.Serialization.DI
 
             container.BindInterfacesAndSelfTo<UnityObjectSerializer>().AsSingle();
 
-            #if UNIT_CSV
+            #if THEONE_CSV
             if (!container.HasBinding<CsvConfiguration>())
             {
                 container.BindInstance(new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -46,7 +46,7 @@ namespace UniT.Data.Serialization.DI
             container.BindInterfacesAndSelfTo<CsvSerializer>().AsSingle();
             #endif
 
-            #if UNIT_MEMORYPACK
+            #if THEONE_MEMORYPACK
             if (!container.HasBinding<MemoryPackSerializerOptions>())
             {
                 container.BindInstance(MemoryPackSerializerOptions.Default);
@@ -54,7 +54,7 @@ namespace UniT.Data.Serialization.DI
             container.BindInterfacesAndSelfTo<MemoryPackSerializer>().AsSingle();
             #endif
 
-            #if UNIT_MESSAGEPACK
+            #if THEONE_MESSAGEPACK
             if (!container.HasBinding<MessagePackSerializerOptions>())
             {
                 container.BindInstance(MessagePackSerializerOptions.Standard);

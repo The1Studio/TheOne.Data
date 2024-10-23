@@ -1,11 +1,11 @@
-﻿#if UNIT_ZENJECT
+﻿#if THEONE_ZENJECT
 #nullable enable
-namespace UniT.Data.Conversion.DI
+namespace TheOne.Data.Conversion.DI
 {
     using System;
     using System.Globalization;
     using Zenject;
-    #if UNIT_JSON
+    #if THEONE_JSON
     using Newtonsoft.Json;
     using JsonConverter = JsonConverter;
     #endif
@@ -31,7 +31,7 @@ namespace UniT.Data.Conversion.DI
 
             #region Converters
 
-            #if UNIT_JSON
+            #if THEONE_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
                 container.BindInstance(DefaultJsonSerializerSettings.Value);

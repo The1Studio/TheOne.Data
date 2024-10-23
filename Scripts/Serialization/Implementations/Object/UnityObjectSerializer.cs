@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace UniT.Data.Serialization
+namespace TheOne.Data.Serialization
 {
     using System;
     using UnityEngine.Scripting;

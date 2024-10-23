@@ -1,11 +1,11 @@
 #nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
-    using UniT.Extensions;
+    using TheOne.Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -25,7 +25,7 @@ namespace UniT.Data.Storage
 
         public override void Flush() => PlayerPrefs.Save();
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public override UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return UniTask.FromResult(this.Read(key));

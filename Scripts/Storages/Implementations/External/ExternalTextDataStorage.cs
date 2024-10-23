@@ -1,13 +1,13 @@
 ﻿#nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     using System;
     using System.IO;
     using System.Linq;
-    using UniT.Extensions;
-    using UniT.Logging;
+    using TheOne.Extensions;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
@@ -39,7 +39,7 @@ namespace UniT.Data.Storage
             return File.ReadAllText(path);
         }
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public override async UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             var subProgresses = progress.CreateSubProgresses(2).ToArray();

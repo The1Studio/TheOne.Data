@@ -1,8 +1,8 @@
-﻿#if UNIT_VCONTAINER
+﻿#if THEONE_VCONTAINER
 #nullable enable
-namespace UniT.Data.Storage.DI
+namespace TheOne.Data.Storage.DI
 {
-    using UniT.ResourceManagement.DI;
+    using TheOne.ResourceManagement.DI;
     using VContainer;
 
     public static class StorageVContainer

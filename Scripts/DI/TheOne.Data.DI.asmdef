@@ -1,49 +1,49 @@
 {
-  "name": "UniT.Data.DI",
-  "rootNamespace": "UniT.Data.DI",
+  "name": "TheOne.Data.DI",
+  "rootNamespace": "TheOne.Data.DI",
   "references": [
-    "UniT.Logging.DI",
-    "UniT.ResourceManagement.DI",
-    "UniT.Data",
-    "UniT.DI",
+    "TheOne.Logging.DI",
+    "TheOne.ResourceManagement.DI",
+    "TheOne.Data",
+    "TheOne.DI",
     "Zenject",
     "VContainer"
   ],
   "versionDefines": [
     {
-      "name": "com.frostbun.unit.di",
+      "name": "com.theone.di",
       "expression": "",
-      "define": "UNIT_DI"
+      "define": "THEONE_DI"
     },
     {
       "name": "com.svermeulen.extenject",
       "expression": "",
-      "define": "UNIT_ZENJECT"
+      "define": "THEONE_ZENJECT"
     },
     {
       "name": "jp.hadashikick.vcontainer",
       "expression": "",
-      "define": "UNIT_VCONTAINER"
+      "define": "THEONE_VCONTAINER"
     },
     {
       "name": "com.unity.nuget.newtonsoft-json",
       "expression": "",
-      "define": "UNIT_JSON"
+      "define": "THEONE_JSON"
     },
     {
       "name": "org.nuget.csvhelper",
       "expression": "",
-      "define": "UNIT_CSV"
+      "define": "THEONE_CSV"
     },
     {
       "name": "org.nuget.memorypack",
       "expression": "",
-      "define": "UNIT_MEMORYPACK"
+      "define": "THEONE_MEMORYPACK"
     },
     {
       "name": "org.nuget.messagepack",
       "expression": "",
-      "define": "UNIT_MESSAGEPACK"
+      "define": "THEONE_MESSAGEPACK"
     }
   ]
 }

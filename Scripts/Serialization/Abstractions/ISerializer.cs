@@ -1,9 +1,9 @@
 ﻿#nullable enable
-namespace UniT.Data.Serialization
+namespace TheOne.Data.Serialization
 {
     using System;
     using System.Threading;
-    #if UNIT_UNITASK
+    #if THEONE_UNITASK
     using Cysharp.Threading.Tasks;
     #else
     using System.Collections;
@@ -19,7 +19,7 @@ namespace UniT.Data.Serialization
 
         public object Serialize(object data);
 
-        #if UNIT_UNITASK
+        #if THEONE_UNITASK
         public UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default);
 
         public UniTask<object> SerializeAsync(object data, CancellationToken cancellationToken = default);

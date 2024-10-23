@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storage
+namespace TheOne.Data.Storage
 {
     public interface IWritableData : IData
     {

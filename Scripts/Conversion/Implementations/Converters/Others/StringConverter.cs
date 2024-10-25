@@ -18,7 +18,7 @@ namespace UniT.Data.Conversion
 
         protected override string ConvertToString(object obj, Type type)
         {
-            return obj.ToString();
+            return (string)obj;
         }
     }
 }

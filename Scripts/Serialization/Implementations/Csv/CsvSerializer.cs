@@ -159,8 +159,8 @@ namespace UniT.Data.Serialization
             public Serializer(IConverterManager converterManager, ICsvData data, CsvWriter writer)
             {
                 this.converterManager = converterManager;
-                this.data   = data.GetValues();
-                this.writer = writer;
+                this.data             = data.GetValues();
+                this.writer           = writer;
                 var rowType = data.RowType;
                 var (prefix, _)                  = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
@@ -212,7 +212,13 @@ namespace UniT.Data.Serialization
                     var row = this.data.Current;
                     foreach (var (field, converter) in this.normalFields)
                     {
-                        this.writer.WriteField(converter.ConvertToString(field.GetValue(row), field.FieldType));
+                        var value = field.GetValue(row);
+                        if (value is null)
+                        {
+                            this.writer.WriteField(string.Empty);
+                            continue;
+                        }
+                        this.writer.WriteField(converter.ConvertToString(value, field.FieldType));
                     }
                     this.hasValue = false;
                 }

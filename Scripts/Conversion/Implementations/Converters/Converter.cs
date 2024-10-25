@@ -13,7 +13,9 @@ namespace UniT.Data.Conversion
         {
             try
             {
-                return this.ConvertFromString(str, type);
+                var result     = this.ConvertFromString(str, type);
+                var resultType = result.GetType();
+                return type.IsAssignableFrom(resultType) ? result : throw new InvalidOperationException($"Expected '{type.Name}', got '{resultType.Name}'");
             }
             catch (Exception e)
             {

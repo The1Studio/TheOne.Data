@@ -28,6 +28,11 @@ namespace UniT.Data.Conversion
 
         protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
 
+        protected override object? GetDefaultValue(Type type)
+        {
+            return this.Manager.GetDefaultValue(MakeArrayType(type));
+        }
+
         protected override object ConvertFromString(string str, Type type)
         {
             return this.Manager.ConvertFromString(str, MakeArrayType(type));

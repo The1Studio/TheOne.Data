@@ -16,6 +16,11 @@ namespace UniT.Data.Conversion
             this.separator = config.CollectionSeparator;
         }
 
+        protected override object? GetDefaultValue(Type type)
+        {
+            return Array.CreateInstance(type.GetElementType()!, 0);
+        }
+
         protected override object ConvertFromString(string str, Type type)
         {
             var elementType      = type.GetElementType()!;

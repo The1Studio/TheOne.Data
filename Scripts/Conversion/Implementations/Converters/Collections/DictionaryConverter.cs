@@ -21,9 +21,14 @@ namespace UniT.Data.Conversion
             this.separator = config.KeyValueSeparator;
         }
 
+        private static readonly Type ArrayType = typeof(string[]);
+
         protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(Dictionary<,>));
 
-        private static readonly Type ArrayType = typeof(string[]);
+        protected override object? GetDefaultValue(Type type)
+        {
+            return Activator.CreateInstance(type, 0);
+        }
 
         protected override object ConvertFromString(string str, Type type)
         {

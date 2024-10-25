@@ -9,6 +9,8 @@ namespace UniT.Data.Conversion
 
         bool IConverter.CanConvert(Type type) => this.CanConvert(type);
 
+        object? IConverter.GetDefaultValue(Type type) => this.GetDefaultValue(type);
+
         object IConverter.ConvertFromString(string str, Type type)
         {
             try
@@ -38,6 +40,8 @@ namespace UniT.Data.Conversion
         protected IConverterManager Manager { get; private set; } = null!;
 
         protected abstract bool CanConvert(Type type);
+
+        protected virtual object? GetDefaultValue(Type type) => null;
 
         protected abstract object ConvertFromString(string str, Type type);
 

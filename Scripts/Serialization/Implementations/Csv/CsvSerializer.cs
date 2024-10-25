@@ -117,7 +117,11 @@ namespace UniT.Data.Serialization
                 foreach (var (field, (index, converter)) in this.normalFields)
                 {
                     var str = this.reader[index];
-                    if (str.IsNullOrWhitespace()) continue;
+                    if (str.IsNullOrWhitespace())
+                    {
+                        field.SetValue(row, converter.GetDefaultValue(field.FieldType));
+                        continue;
+                    }
                     var value = converter.ConvertFromString(str, field.FieldType);
                     field.SetValue(row, value);
                     if (field == this.keyField) keyValue = value;

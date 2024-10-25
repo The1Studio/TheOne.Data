@@ -19,6 +19,11 @@ namespace UniT.Data.Conversion
 
         protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(ReadOnlyDictionary<,>));
 
+        protected override object? GetDefaultValue(Type type)
+        {
+            return Activator.CreateInstance(type, this.Manager.GetDefaultValue(MakeDictionaryType(type)));
+        }
+
         protected override object ConvertFromString(string str, Type type)
         {
             return Activator.CreateInstance(type, this.Manager.ConvertFromString(str, MakeDictionaryType(type)));

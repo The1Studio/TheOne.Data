@@ -13,7 +13,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public class AssetTextDataStorage : ReadOnlyDataStorage<string>
+    public sealed class AssetTextDataStorage : ReadOnlyDataStorage<string>
     {
         private readonly IAssetsManager assetsManager;
 

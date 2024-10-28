@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public class AssetBinaryDataStorage : ReadOnlyDataStorage<byte[]>
+    public sealed class AssetBinaryDataStorage : ReadOnlyDataStorage<byte[]>
     {
         private readonly IAssetsManager assetsManager;
 

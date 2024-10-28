@@ -8,7 +8,6 @@ namespace UniT.Data.DI
     using UniT.Data.Serialization.DI;
     using UniT.Data.Storage.DI;
     using UniT.Logging.DI;
-    using UniT.ResourceManagement.DI;
     using VContainer;
     #if UNIT_JSON
     using Newtonsoft.Json;
@@ -23,7 +22,6 @@ namespace UniT.Data.DI
         {
             if (builder.Exists(typeof(IDataManager), true)) return;
             builder.RegisterLoggerManager();
-            builder.RegisterAssetsManager();
 
             #region Configs
 
@@ -62,7 +60,7 @@ namespace UniT.Data.DI
 
             builder.RegisterConverterManager();
             builder.RegisterSerializers();
-            builder.RegisterDataStorages();
+            builder.RegisterLocalDataStorages();
             builder.Register<DataManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }

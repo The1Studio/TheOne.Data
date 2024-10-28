@@ -9,7 +9,6 @@ namespace UniT.Data.DI
     using UniT.Data.Storage.DI;
     using UniT.DI;
     using UniT.Logging.DI;
-    using UniT.ResourceManagement.DI;
     #if UNIT_JSON
     using Newtonsoft.Json;
     #endif
@@ -23,7 +22,6 @@ namespace UniT.Data.DI
         {
             if (container.Contains<IDataManager>()) return;
             container.AddLoggerManager();
-            container.AddAssetsManager();
 
             #region Configs
 
@@ -62,7 +60,7 @@ namespace UniT.Data.DI
 
             container.AddConverterManager();
             container.AddSerializers();
-            container.AddDataStorages();
+            container.AddLocalDataStorages();
             container.AddInterfaces<DataManager>();
         }
     }

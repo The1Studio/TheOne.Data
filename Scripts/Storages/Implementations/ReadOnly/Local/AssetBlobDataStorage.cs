@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public class AssetBlobDataStorage : ReadOnlyDataStorage<object>
+    public sealed class AssetBlobDataStorage : ReadOnlyDataStorage<object>
     {
         private readonly IAssetsManager assetsManager;
 

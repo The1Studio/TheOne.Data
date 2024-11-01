@@ -97,7 +97,7 @@ namespace UniT.Data.Storage
             #if UNITY_WEBGL
             return this.ValidateAndExtract();
             #endif
-            await UniTask.WaitUntil(this, state => !state.validating, cancellationToken: cancellationToken);
+            if (this.validating) await UniTask.WaitUntil(this, state => !state.validating, cancellationToken: cancellationToken);
             if (this.validated) return true;
             this.validating = true;
             try
@@ -129,7 +129,7 @@ namespace UniT.Data.Storage
 
         private async UniTask FetchInfoAndDownloadAsync(CancellationToken cancellationToken)
         {
-            await UniTask.WaitUntil(this, state => !state.fetching, cancellationToken: cancellationToken);
+            if (this.fetching) await UniTask.WaitUntil(this, state => !state.fetching, cancellationToken: cancellationToken);
             if (this.fetched) return;
             var cancelled = false;
             this.fetching = true;
@@ -189,7 +189,7 @@ namespace UniT.Data.Storage
             #if UNITY_WEBGL
             return this.ValidateAndExtract();
             #endif
-            yield return new WaitUntil(() => !this.validating);
+            if (this.validating) yield return new WaitUntil(() => !this.validating);
             if (this.validated)
             {
                 callback(true);
@@ -228,7 +228,7 @@ namespace UniT.Data.Storage
 
         private IEnumerator FetchInfoAndDownloadAsync()
         {
-            yield return new WaitUntil(() => !this.fetching);
+            if (this.fetching) yield return new WaitUntil(() => !this.fetching);
             if (this.fetched) yield break;
             this.fetching = true;
             try

@@ -12,25 +12,25 @@ namespace UniT.Data.Storage
     using UniT.Extensions;
     #endif
 
-    public sealed class RemoteBinaryDataStorage : ReadOnlyDataStorage<byte[]>
+    public sealed class ExternalBinaryDataStorage : ReadOnlyDataStorage<byte[]>
     {
-        private readonly IRemoteFileVersionManager remoteFileVersionManager;
+        private readonly IExternalFileVersionManager externalFileVersionManager;
 
         [Preserve]
-        public RemoteBinaryDataStorage(IRemoteFileVersionManager remoteFileVersionManager)
+        public ExternalBinaryDataStorage(IExternalFileVersionManager externalFileVersionManager)
         {
-            this.remoteFileVersionManager = remoteFileVersionManager;
+            this.externalFileVersionManager = externalFileVersionManager;
         }
 
         protected override byte[]? Read(string key)
         {
-            return File.ReadAllBytes(this.remoteFileVersionManager.GetFilePath(key));
+            return File.ReadAllBytes(this.externalFileVersionManager.GetFilePath(key));
         }
 
         #if UNIT_UNITASK
         protected override async UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return await File.ReadAllBytesAsync(await this.remoteFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
+            return await File.ReadAllBytesAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
         }
         #else
         protected override IEnumerator ReadAsync(string key, Action<byte[]?> callback, IProgress<float>? progress)

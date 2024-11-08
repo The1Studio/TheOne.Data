@@ -4,7 +4,6 @@ namespace UniT.Data.Conversion
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using UniT.Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -17,7 +16,7 @@ namespace UniT.Data.Conversion
         {
         }
 
-        protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(ReadOnlyDictionary<,>));
+        protected override bool CanConvert(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ReadOnlyDictionary<,>);
 
         protected override object? GetDefaultValue(Type type)
         {

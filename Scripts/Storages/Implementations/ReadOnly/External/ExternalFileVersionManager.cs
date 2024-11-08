@@ -19,19 +19,19 @@ namespace UniT.Data.Storage
     using UniT.Extensions;
     #endif
 
-    public sealed class RemoteFileVersionManager : IRemoteFileVersionManager
+    public sealed class ExternalFileVersionManager : IExternalFileVersionManager
     {
-        private const string VERSION_INFO_KEY = nameof(RemoteFileVersionManager) + "/" + nameof(VersionInfo);
+        private const string VERSION_INFO_KEY = nameof(ExternalFileVersionManager) + "/" + nameof(VersionInfo);
 
         private static readonly string PersistentDataPath = Application.persistentDataPath;
         private static readonly string TemporaryCachePath = Application.temporaryCachePath;
 
-        private readonly IRemoteFileVersionManagerConfig config;
-        private readonly IExternalAssetsManager          externalAssetsManager;
-        private readonly ILogger                         logger;
+        private readonly IExternalFileVersionManagerConfig config;
+        private readonly IExternalAssetsManager            externalAssetsManager;
+        private readonly ILogger                           logger;
 
         [Preserve]
-        public RemoteFileVersionManager(IRemoteFileVersionManagerConfig config, IExternalAssetsManager externalAssetsManager, ILoggerManager loggerManager)
+        public ExternalFileVersionManager(IExternalFileVersionManagerConfig config, IExternalAssetsManager externalAssetsManager, ILoggerManager loggerManager)
         {
             this.config                = config;
             this.externalAssetsManager = externalAssetsManager;
@@ -50,7 +50,7 @@ namespace UniT.Data.Storage
 
         #region Sync
 
-        string IRemoteFileVersionManager.GetFilePath(string name)
+        string IExternalFileVersionManager.GetFilePath(string name)
         {
             this.logger.Warning("`GetFilePath` only use cached file. Use `GetFilePathAsync` to download new file from remote.");
             if (!this.ValidateAndExtract()) throw new Exception($"Could not validate {this.versionInfo}");
@@ -85,7 +85,7 @@ namespace UniT.Data.Storage
         #region Async
 
         #if UNIT_UNITASK
-        async UniTask<string> IRemoteFileVersionManager.GetFilePathAsync(string name, CancellationToken cancellationToken)
+        async UniTask<string> IExternalFileVersionManager.GetFilePathAsync(string name, CancellationToken cancellationToken)
         {
             await this.FetchInfoAndDownloadAsync(cancellationToken);
             if (!await this.ValidateAndExtractAsync(cancellationToken)) throw new Exception($"Could not validate {this.versionInfo}");

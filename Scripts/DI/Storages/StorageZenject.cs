@@ -7,7 +7,7 @@ namespace UniT.Data.Storage.DI
 
     public static class StorageZenject
     {
-        public static void BindLocalDataStorages(this DiContainer container)
+        public static void BindDataStorages(this DiContainer container)
         {
             container.BindAssetsManager();
 
@@ -18,14 +18,14 @@ namespace UniT.Data.Storage.DI
             container.BindInterfacesTo<PlayerPrefsDataStorage>().AsSingle();
         }
 
-        public static void BindRemoteDataStorages(this DiContainer container)
+        public static void BindExternalDataStorages(this DiContainer container)
         {
             container.BindExternalAssetsManager();
 
-            container.BindInterfacesTo<RemoteFileVersionManager>().AsSingle();
+            container.BindInterfacesTo<ExternalFileVersionManager>().AsSingle();
 
-            container.BindInterfacesTo<RemoteBinaryDataStorage>().AsSingle();
-            container.BindInterfacesTo<RemoteTextDataStorage>().AsSingle();
+            container.BindInterfacesTo<ExternalBinaryDataStorage>().AsSingle();
+            container.BindInterfacesTo<ExternalTextDataStorage>().AsSingle();
         }
     }
 }

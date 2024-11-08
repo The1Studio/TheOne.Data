@@ -60,7 +60,7 @@ namespace UniT.Data.DI
 
             builder.RegisterConverterManager();
             builder.RegisterSerializers();
-            builder.RegisterLocalDataStorages();
+            builder.RegisterDataStorages();
             builder.Register<DataManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }

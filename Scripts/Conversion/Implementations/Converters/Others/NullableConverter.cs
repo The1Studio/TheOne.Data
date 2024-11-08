@@ -2,7 +2,6 @@
 namespace UniT.Data.Conversion
 {
     using System;
-    using UniT.Extensions;
     using UnityEngine.Scripting;
 
     public sealed class NullableConverter : Converter
@@ -12,7 +11,7 @@ namespace UniT.Data.Conversion
         {
         }
 
-        protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(Nullable<>));
+        protected override bool CanConvert(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         protected override object ConvertFromString(string str, Type type)
         {

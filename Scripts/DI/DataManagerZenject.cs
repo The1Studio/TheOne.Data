@@ -60,7 +60,7 @@ namespace UniT.Data.DI
 
             container.BindConverterManager();
             container.BindSerializers();
-            container.BindLocalDataStorages();
+            container.BindDataStorages();
             container.BindInterfacesTo<DataManager>().AsSingle();
         }
     }

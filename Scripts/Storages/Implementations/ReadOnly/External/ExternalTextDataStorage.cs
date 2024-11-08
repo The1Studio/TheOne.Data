@@ -12,25 +12,25 @@ namespace UniT.Data.Storage
     using UniT.Extensions;
     #endif
 
-    public sealed class RemoteTextDataStorage : ReadOnlyDataStorage<string>
+    public sealed class ExternalTextDataStorage : ReadOnlyDataStorage<string>
     {
-        private readonly IRemoteFileVersionManager remoteFileVersionManager;
+        private readonly IExternalFileVersionManager externalFileVersionManager;
 
         [Preserve]
-        public RemoteTextDataStorage(IRemoteFileVersionManager remoteFileVersionManager)
+        public ExternalTextDataStorage(IExternalFileVersionManager externalFileVersionManager)
         {
-            this.remoteFileVersionManager = remoteFileVersionManager;
+            this.externalFileVersionManager = externalFileVersionManager;
         }
 
         protected override string? Read(string key)
         {
-            return File.ReadAllText(this.remoteFileVersionManager.GetFilePath(key));
+            return File.ReadAllText(this.externalFileVersionManager.GetFilePath(key));
         }
 
         #if UNIT_UNITASK
         protected override async UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return await File.ReadAllTextAsync(await this.remoteFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
+            return await File.ReadAllTextAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
         }
         #else
         protected override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)

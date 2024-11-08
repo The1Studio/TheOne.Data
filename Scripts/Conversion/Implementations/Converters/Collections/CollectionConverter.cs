@@ -6,7 +6,6 @@ namespace UniT.Data.Conversion
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using UniT.Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -14,7 +13,7 @@ namespace UniT.Data.Conversion
     /// </summary>
     public sealed class CollectionConverter : Converter
     {
-        private static readonly Type[] SupportedTypes =
+        private static readonly IReadOnlyCollection<Type> SupportedTypes = new HashSet<Type>
         {
             typeof(List<>),
             typeof(ReadOnlyCollection<>),
@@ -28,7 +27,7 @@ namespace UniT.Data.Conversion
         {
         }
 
-        protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
+        protected override bool CanConvert(Type type) => type.IsGenericType && SupportedTypes.Contains(type.GetGenericTypeDefinition());
 
         protected override object? GetDefaultValue(Type type)
         {

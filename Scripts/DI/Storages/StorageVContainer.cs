@@ -7,7 +7,7 @@ namespace UniT.Data.Storage.DI
 
     public static class StorageVContainer
     {
-        public static void RegisterLocalDataStorages(this IContainerBuilder builder)
+        public static void RegisterDataStorages(this IContainerBuilder builder)
         {
             builder.RegisterAssetsManager();
 
@@ -18,14 +18,14 @@ namespace UniT.Data.Storage.DI
             builder.Register<PlayerPrefsDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
-        public static void RegisterRemoteDataStorages(this IContainerBuilder builder)
+        public static void RegisterExternalDataStorages(this IContainerBuilder builder)
         {
             builder.RegisterExternalAssetsManager();
 
-            builder.Register<RemoteFileVersionManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ExternalFileVersionManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            builder.Register<RemoteBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<RemoteTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ExternalBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ExternalTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

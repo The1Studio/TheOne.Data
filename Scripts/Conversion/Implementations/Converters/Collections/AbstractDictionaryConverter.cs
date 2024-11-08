@@ -4,7 +4,6 @@ namespace UniT.Data.Conversion
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -12,7 +11,7 @@ namespace UniT.Data.Conversion
     /// </summary>
     public sealed class AbstractDictionaryConverter : Converter
     {
-        private static readonly Type[] SupportedTypes =
+        private static readonly IReadOnlyCollection<Type> SupportedTypes = new HashSet<Type>
         {
             typeof(IDictionary<,>),
             typeof(IReadOnlyDictionary<,>),
@@ -23,7 +22,7 @@ namespace UniT.Data.Conversion
         {
         }
 
-        protected override bool CanConvert(Type type) => SupportedTypes.Any(type.IsGenericTypeOf);
+        protected override bool CanConvert(Type type) => type.IsGenericType && SupportedTypes.Contains(type.GetGenericTypeDefinition());
 
         protected override object? GetDefaultValue(Type type)
         {

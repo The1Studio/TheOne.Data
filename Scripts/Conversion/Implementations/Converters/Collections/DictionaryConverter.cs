@@ -5,7 +5,6 @@ namespace UniT.Data.Conversion
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -23,7 +22,7 @@ namespace UniT.Data.Conversion
 
         private static readonly Type ArrayType = typeof(string[]);
 
-        protected override bool CanConvert(Type type) => type.IsGenericTypeOf(typeof(Dictionary<,>));
+        protected override bool CanConvert(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
         protected override object? GetDefaultValue(Type type)
         {

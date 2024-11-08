@@ -50,6 +50,6 @@ namespace UniT.Data.Conversion
 
     public abstract class Converter<T> : Converter
     {
-        protected sealed override bool CanConvert(Type type) => typeof(T).IsAssignableFrom(type);
+        protected sealed override bool CanConvert(Type type) => type == typeof(T);
     }
 }

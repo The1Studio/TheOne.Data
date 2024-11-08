@@ -10,7 +10,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public interface IRemoteFileVersionManager
+    public interface IExternalFileVersionManager
     {
         public string GetFilePath(string name);
 
@@ -21,7 +21,7 @@ namespace UniT.Data.Storage
         #endif
     }
 
-    public interface IRemoteFileVersionManagerConfig
+    public interface IExternalFileVersionManagerConfig
     {
         public string FetchVersionInfoUrl { get; }
 

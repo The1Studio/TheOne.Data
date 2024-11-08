@@ -7,7 +7,7 @@ namespace UniT.Data.Storage.DI
 
     public static class StorageDI
     {
-        public static void AddLocalDataStorages(this DependencyContainer container)
+        public static void AddDataStorages(this DependencyContainer container)
         {
             container.AddAssetsManager();
 
@@ -18,14 +18,14 @@ namespace UniT.Data.Storage.DI
             container.AddInterfaces<PlayerPrefsDataStorage>();
         }
 
-        public static void AddRemoteDataStorages(this DependencyContainer container)
+        public static void AddExternalDataStorages(this DependencyContainer container)
         {
             container.AddExternalAssetsManager();
 
-            container.AddInterfaces<RemoteFileVersionManager>();
+            container.AddInterfaces<ExternalFileVersionManager>();
 
-            container.AddInterfaces<RemoteBinaryDataStorage>();
-            container.AddInterfaces<RemoteTextDataStorage>();
+            container.AddInterfaces<ExternalBinaryDataStorage>();
+            container.AddInterfaces<ExternalTextDataStorage>();
         }
     }
 }

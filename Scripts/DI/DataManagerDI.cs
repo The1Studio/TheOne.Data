@@ -60,7 +60,7 @@ namespace UniT.Data.DI
 
             container.AddConverterManager();
             container.AddSerializers();
-            container.AddLocalDataStorages();
+            container.AddDataStorages();
             container.AddInterfaces<DataManager>();
         }
     }

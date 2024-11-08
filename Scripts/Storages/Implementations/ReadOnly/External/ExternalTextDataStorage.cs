@@ -35,7 +35,7 @@ namespace UniT.Data.Storage
         #else
         protected override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
         {
-            return this.remoteFileVersionManager.GetFilePathAsync(key, path => CoroutineRunner.Run(() => File.ReadAllText(path), callback));
+            return this.externalFileVersionManager.GetFilePathAsync(key, path => CoroutineRunner.Run(() => File.ReadAllText(path), callback));
         }
         #endif
     }

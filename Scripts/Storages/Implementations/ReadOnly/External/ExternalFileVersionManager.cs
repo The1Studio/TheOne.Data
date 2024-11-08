@@ -174,7 +174,7 @@ namespace UniT.Data.Storage
             }
         }
         #else
-        IEnumerator IRemoteFileVersionManager.GetFilePathAsync(string name, Action<string> callback)
+        IEnumerator IExternalFileVersionManager.GetFilePathAsync(string name, Action<string> callback)
         {
             yield return this.FetchInfoAndDownloadAsync();
             yield return this.ValidateAndExtractAsync(validated =>

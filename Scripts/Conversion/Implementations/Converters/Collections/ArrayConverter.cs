@@ -6,7 +6,7 @@ namespace UniT.Data.Conversion
     using UniT.Extensions;
     using UnityEngine.Scripting;
 
-    public sealed class ArrayConverter : Converter<Array>
+    public sealed class ArrayConverter : Converter
     {
         private readonly string separator;
 
@@ -15,6 +15,8 @@ namespace UniT.Data.Conversion
         {
             this.separator = config.CollectionSeparator;
         }
+
+        protected override bool CanConvert(Type type) => type.IsArray;
 
         protected override object? GetDefaultValue(Type type)
         {

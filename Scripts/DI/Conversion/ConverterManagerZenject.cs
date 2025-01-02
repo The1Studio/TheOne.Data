@@ -8,6 +8,8 @@ namespace UniT.Data.Conversion.DI
     {
         public static void BindConverterManager(this DiContainer container)
         {
+            if (container.HasBinding<IConverterManager>()) return;
+
             #region Converters
 
             #if UNIT_JSON

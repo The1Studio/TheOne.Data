@@ -22,9 +22,15 @@ namespace UniT.Data.DI
         {
             if (builder.Exists(typeof(IDataManager), true)) return;
             builder.RegisterLoggerManager();
+            builder.RegisterDataConfigs();
+            builder.RegisterConverterManager();
+            builder.RegisterSerializers();
+            builder.RegisterDataStorages();
+            builder.Register<DataManager>(Lifetime.Singleton).AsImplementedInterfaces();
+        }
 
-            #region Configs
-
+        public static void RegisterDataConfigs(this IContainerBuilder builder)
+        {
             if (!builder.Exists(typeof(IFormatProvider), true))
             {
                 builder.Register(_ => (IFormatProvider)CultureInfo.InvariantCulture, Lifetime.Singleton);
@@ -55,13 +61,6 @@ namespace UniT.Data.DI
                 }, Lifetime.Singleton);
             }
             #endif
-
-            #endregion
-
-            builder.RegisterConverterManager();
-            builder.RegisterSerializers();
-            builder.RegisterDataStorages();
-            builder.Register<DataManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

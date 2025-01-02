@@ -22,9 +22,15 @@ namespace UniT.Data.DI
         {
             if (container.Contains<IDataManager>()) return;
             container.AddLoggerManager();
+            container.AddDataConfigs();
+            container.AddConverterManager();
+            container.AddSerializers();
+            container.AddDataStorages();
+            container.AddInterfaces<DataManager>();
+        }
 
-            #region Configs
-
+        public static void AddDataConfigs(this DependencyContainer container)
+        {
             if (!container.Contains<IFormatProvider>())
             {
                 container.Add((IFormatProvider)CultureInfo.InvariantCulture);
@@ -55,13 +61,6 @@ namespace UniT.Data.DI
                 });
             }
             #endif
-
-            #endregion
-
-            container.AddConverterManager();
-            container.AddSerializers();
-            container.AddDataStorages();
-            container.AddInterfaces<DataManager>();
         }
     }
 }

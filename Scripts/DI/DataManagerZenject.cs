@@ -22,9 +22,15 @@ namespace UniT.Data.DI
         {
             if (container.HasBinding<IDataManager>()) return;
             container.BindLoggerManager();
+            container.BindDataConfigs();
+            container.BindConverterManager();
+            container.BindSerializers();
+            container.BindDataStorages();
+            container.BindInterfacesTo<DataManager>().AsSingle();
+        }
 
-            #region Configs
-
+        public static void BindDataConfigs(this DiContainer container)
+        {
             if (!container.HasBinding<IFormatProvider>())
             {
                 container.Bind<IFormatProvider>().FromMethod(() => CultureInfo.InvariantCulture).AsSingle();
@@ -55,13 +61,6 @@ namespace UniT.Data.DI
                 }).AsSingle();
             }
             #endif
-
-            #endregion
-
-            container.BindConverterManager();
-            container.BindSerializers();
-            container.BindDataStorages();
-            container.BindInterfacesTo<DataManager>().AsSingle();
         }
     }
 }

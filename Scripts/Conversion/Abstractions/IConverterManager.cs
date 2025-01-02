@@ -12,5 +12,11 @@ namespace UniT.Data.Conversion
         public object ConvertFromString(string str, Type type) => this.GetConverter(type).ConvertFromString(str, type);
 
         public string ConvertToString(object obj, Type type) => this.GetConverter(type).ConvertToString(obj, type);
+
+        public T? GetDefaultValue<T>() => (T?)this.GetDefaultValue(typeof(T));
+
+        public T ConvertFromString<T>(string str) => (T)this.ConvertFromString(str, typeof(T));
+
+        public string ConvertToString<T>(T obj) where T : notnull => this.ConvertToString(obj, typeof(T));
     }
 }

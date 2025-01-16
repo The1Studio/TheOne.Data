@@ -8,7 +8,7 @@ namespace UniT.Data.Conversion
     using UniT.Extensions;
     using UnityEngine.Scripting;
 
-    public sealed class TupleConverter : Converter<ITuple>
+    public sealed class TupleConverter : Converter
     {
         private readonly string separator;
 
@@ -17,6 +17,8 @@ namespace UniT.Data.Conversion
         {
             this.separator = config.TupleSeparator;
         }
+
+        protected override bool CanConvert(Type type) => type.GetInterfaces().Contains(typeof(ITuple));
 
         protected override object ConvertFromString(string str, Type type)
         {

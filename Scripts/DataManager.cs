@@ -258,7 +258,7 @@ namespace UniT.Data
 
         #region Private
 
-        private IEnumerable<string> WritableDataKeys => this.dataCache.Where<string, IData>((_, data) => data is IWritableData).Select<string, IData, string>((key, _) => key);
+        private IEnumerable<string> WritableDataKeys => this.dataCache.WhereValue(Item.Is<IWritableData>).SelectKeys();
 
         private (ISerializer Serializer, IDataStorage Storage) GetSerializerAndStorage(Type type)
         {

@@ -2,20 +2,19 @@
 namespace UniT.Data.Conversion
 {
     using System;
+    using UnityEditor;
     using UnityEngine.Scripting;
 
-    public sealed class EnumConverter : Converter
+    public sealed class UnityGuidConverter : Converter<GUID>
     {
         [Preserve]
-        public EnumConverter()
+        public UnityGuidConverter()
         {
         }
 
-        protected override bool CanConvert(Type type) => type.IsEnum;
-
         protected override object ConvertFromString(string str, Type type)
         {
-            return Enum.Parse(type, str);
+            return GUID.TryParse(str, out var guid) ? guid : throw new FormatException();
         }
 
         protected override string ConvertToString(object obj, Type type)

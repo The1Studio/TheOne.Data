@@ -5,7 +5,6 @@
     "UniT.Extensions",
     "UniT.Logging",
     "UniT.ResourceManagement",
-    "UniT.FbInstant",
     "UniTask"
   ],
   "versionDefines": [
@@ -23,11 +22,6 @@
       "name": "org.nuget.csvhelper",
       "expression": "",
       "define": "UNIT_CSV"
-    },
-    {
-      "name": "com.frostbun.unit.fbinstant",
-      "expression": "",
-      "define": "UNIT_FBINSTANT"
     }
   ]
 }

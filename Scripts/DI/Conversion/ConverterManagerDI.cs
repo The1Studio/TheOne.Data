@@ -45,8 +45,9 @@ namespace UniT.Data.Conversion.DI
             container.AddInterfaces<StringConverter>();
             container.AddInterfaces<EnumConverter>();
             container.AddInterfaces<NullableConverter>();
-            container.AddInterfaces<GuidConverter>();
             container.AddInterfaces<UriConverter>();
+            container.AddInterfaces<GuidConverter>();
+            container.AddInterfaces<UnityGuidConverter>();
 
             #endregion
 

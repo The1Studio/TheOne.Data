@@ -45,8 +45,9 @@ namespace UniT.Data.Conversion.DI
             builder.Register<StringConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<EnumConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<NullableConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<GuidConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<UriConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<GuidConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<UnityGuidConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             #endregion
 

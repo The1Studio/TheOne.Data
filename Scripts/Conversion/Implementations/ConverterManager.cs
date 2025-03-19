@@ -22,10 +22,13 @@ namespace UniT.Data.Conversion
 
         IConverter IConverterManager.GetConverter(Type type)
         {
-            return this.converterCache.GetOrAdd(type, () =>
-                this.converters.LastOrDefault(converter => converter.CanConvert(type))
-                ?? throw new ArgumentOutOfRangeException(nameof(type), type, $"No converter found for {type.Name}")
-            );
+            lock (this.converterCache)
+            {
+                return this.converterCache.GetOrAdd(type, () =>
+                    this.converters.LastOrDefault(converter => converter.CanConvert(type))
+                    ?? throw new ArgumentOutOfRangeException(nameof(type), type, $"No converter found for {type.Name}")
+                );
+            }
         }
     }
 }

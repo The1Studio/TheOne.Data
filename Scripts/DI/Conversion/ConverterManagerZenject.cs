@@ -47,7 +47,6 @@ namespace UniT.Data.Conversion.DI
             container.BindInterfacesTo<NullableConverter>().AsSingle();
             container.BindInterfacesTo<UriConverter>().AsSingle();
             container.BindInterfacesTo<GuidConverter>().AsSingle();
-            container.BindInterfacesTo<UnityGuidConverter>().AsSingle();
 
             #endregion
 

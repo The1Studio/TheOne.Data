@@ -31,10 +31,11 @@ namespace UniT.Data.Conversion.DI
 
             #endregion
 
-            #region DateTime
+            #region Time
 
             builder.Register<DateTimeConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<DateTimeOffsetConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<TimeSpanConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             #endregion
 

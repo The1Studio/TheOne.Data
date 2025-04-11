@@ -31,10 +31,11 @@ namespace UniT.Data.Conversion.DI
 
             #endregion
 
-            #region DateTime
+            #region Time
 
             container.BindInterfacesTo<DateTimeConverter>().AsSingle();
             container.BindInterfacesTo<DateTimeOffsetConverter>().AsSingle();
+            container.BindInterfacesTo<TimeSpanConverter>().AsSingle();
 
             #endregion
 

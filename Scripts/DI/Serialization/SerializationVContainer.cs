@@ -8,12 +8,12 @@ namespace UniT.Data.Serialization.DI
     {
         public static void RegisterSerializers(this IContainerBuilder builder)
         {
-            builder.Register<ObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #if UNIT_JSON
-            builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
             #if UNIT_CSV
-            builder.Register<CsvSerializer>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CsvSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
         }
     }

@@ -27,7 +27,7 @@ namespace UniT.Data.Storage
         {
             var text = this.assetsManager.Load<TextAsset>(key).text;
             this.assetsManager.Unload(key);
-            return text.NullIfWhitespace();
+            return text.NullIfWhiteSpace();
         }
 
         #if UNIT_UNITASK
@@ -38,7 +38,7 @@ namespace UniT.Data.Storage
                 {
                     var text = asset.text;
                     this.assetsManager.Unload(key);
-                    return text.NullIfWhitespace();
+                    return text.NullIfWhiteSpace();
                 });
         }
         #else
@@ -50,7 +50,7 @@ namespace UniT.Data.Storage
                 {
                     var text = asset.text;
                     this.assetsManager.Unload(key);
-                    callback(text.NullIfWhitespace());
+                    callback(text.NullIfWhiteSpace());
                 },
                 progress
             );

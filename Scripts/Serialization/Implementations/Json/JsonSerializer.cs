@@ -16,12 +16,12 @@ namespace UniT.Data.Serialization
             this.settings = settings;
         }
 
-        protected override IJsonData Deserialize(Type type, string rawData)
+        public override IJsonData Deserialize(Type type, string rawData)
         {
             return (IJsonData)JsonConvert.DeserializeObject(rawData, type, this.settings)!;
         }
 
-        protected override string Serialize(IJsonData data)
+        public override string Serialize(IJsonData data)
         {
             return JsonConvert.SerializeObject(data, this.settings);
         }

@@ -19,7 +19,7 @@ namespace UniT.Data.Storage
         {
         }
 
-        protected override string? Read(string key) => PlayerPrefs.GetString(key).NullIfWhitespace();
+        protected override string? Read(string key) => PlayerPrefs.GetString(key).NullIfWhiteSpace();
 
         protected override void Write(string key, string value) => PlayerPrefs.SetString(key, value);
 

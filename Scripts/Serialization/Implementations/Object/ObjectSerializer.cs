@@ -11,8 +11,8 @@ namespace UniT.Data.Serialization
         {
         }
 
-        protected override IData Deserialize(Type type, object rawData) => (IData)rawData;
+        public override IData Deserialize(Type type, object rawData) => (IData)rawData;
 
-        protected override object Serialize(IData data) => data;
+        public override object Serialize(IData data) => data;
     }
 }

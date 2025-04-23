@@ -20,16 +20,16 @@ namespace UniT.Data.Serialization
 
         object ISerializer.Serialize(IData data) => this.Serialize((TData)data);
 
-        protected abstract TData Deserialize(Type type, TRawData rawData);
+        public abstract TData Deserialize(Type type, TRawData rawData);
 
-        protected abstract TRawData Serialize(TData data);
+        public abstract TRawData Serialize(TData data);
 
         #if UNIT_UNITASK
         UniTask<IData> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken) => this.DeserializeAsync(type, (TRawData)rawData, cancellationToken).ContinueWith(data => (IData)data);
 
         UniTask<object> ISerializer.SerializeAsync(IData data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);
 
-        protected virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken)
+        public virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken)
         {
             #if !UNITY_WEBGL
             return UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
@@ -38,7 +38,7 @@ namespace UniT.Data.Serialization
             #endif
         }
 
-        protected virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken)
+        public virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken)
         {
             #if !UNITY_WEBGL
             return UniTask.RunOnThreadPool(() => this.Serialize(data), cancellationToken: cancellationToken);
@@ -51,9 +51,9 @@ namespace UniT.Data.Serialization
 
         IEnumerator ISerializer.SerializeAsync(IData data, Action<object> callback) => this.SerializeAsync((TData)data, rawData => callback(rawData));
 
-        protected virtual IEnumerator DeserializeAsync(Type type, TRawData rawData, Action<TData> callback) => CoroutineRunner.Run(() => this.Deserialize(type, rawData), callback);
+        public virtual IEnumerator DeserializeAsync(Type type, TRawData rawData, Action<TData> callback) => CoroutineRunner.Run(() => this.Deserialize(type, rawData), callback);
 
-        protected virtual IEnumerator SerializeAsync(TData data, Action<TRawData> callback) => CoroutineRunner.Run(() => this.Serialize(data), callback);
+        public virtual IEnumerator SerializeAsync(TData data, Action<TRawData> callback) => CoroutineRunner.Run(() => this.Serialize(data), callback);
         #endif
     }
 }

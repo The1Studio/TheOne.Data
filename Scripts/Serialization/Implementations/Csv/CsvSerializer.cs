@@ -26,7 +26,7 @@ namespace UniT.Data.Serialization
             this.configuration    = configuration;
         }
 
-        protected override ICsvData Deserialize(Type type, string rawData)
+        public override ICsvData Deserialize(Type type, string rawData)
         {
             var       data   = (ICsvData)type.GetEmptyConstructor()();
             using var reader = new CsvReader(new StringReader(rawData), this.configuration);
@@ -37,7 +37,7 @@ namespace UniT.Data.Serialization
             return data;
         }
 
-        protected override string Serialize(ICsvData data)
+        public override string Serialize(ICsvData data)
         {
             using var stringWriter = new StringWriter();
             using var writer       = new CsvWriter(stringWriter, this.configuration);
@@ -86,7 +86,7 @@ namespace UniT.Data.Serialization
                 this.rowConstructor              = rowType.GetEmptyConstructor();
                 var (prefix, key)                = rowType.GetCsvRow();
                 var (normalFields, nestedFields) = rowType.GetCsvFields();
-                this.keyField                    = normalFields.FirstOrDefault(field => key.IsNullOrWhitespace() || field.GetCsvColumn(prefix) == key) ?? throw new InvalidOperationException($"{rowType.Name} has no field {key}");
+                this.keyField                    = normalFields.FirstOrDefault(field => key.IsNullOrWhiteSpace() || field.GetCsvColumn(prefix) == key) ?? throw new InvalidOperationException($"{rowType.Name} has no field {key}");
                 this.normalFields = normalFields
                     .Select(field =>
                     {
@@ -117,7 +117,7 @@ namespace UniT.Data.Serialization
                 foreach (var (field, (index, converter)) in this.normalFields)
                 {
                     var str = this.reader[index];
-                    if (str.IsNullOrWhitespace())
+                    if (str.IsNullOrWhiteSpace())
                     {
                         field.SetValue(row, converter.GetDefaultValue(field.FieldType));
                         continue;

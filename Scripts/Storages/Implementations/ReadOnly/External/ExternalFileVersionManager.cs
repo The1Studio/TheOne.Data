@@ -187,7 +187,7 @@ namespace UniT.Data.Storage
         private IEnumerator ValidateAndExtractAsync(Action<bool> callback)
         {
             #if UNITY_WEBGL
-            return this.ValidateAndExtract();
+            callback(this.ValidateAndExtract());
             #endif
             if (this.validating) yield return new WaitUntil(() => !this.validating);
             if (this.validated)

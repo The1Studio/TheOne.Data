@@ -2,7 +2,13 @@
 #nullable enable
 namespace UniT.Data.Conversion.DI
 {
+    using System;
+    using System.Globalization;
     using VContainer;
+    #if UNIT_JSON
+    using Newtonsoft.Json;
+    using JsonConverter = UniT.Data.Conversion.JsonConverter;
+    #endif
 
     public static class ConverterManagerVContainer
     {
@@ -10,9 +16,32 @@ namespace UniT.Data.Conversion.DI
         {
             if (builder.Exists(typeof(IConverterManager), true)) return;
 
+            #region Configs
+
+            if (!builder.Exists(typeof(IFormatProvider), true))
+            {
+                builder.Register<IFormatProvider>(_ => CultureInfo.InvariantCulture, Lifetime.Singleton);
+            }
+            if (!builder.Exists(typeof(SeparatorConfig)))
+            {
+                builder.Register(_ => new SeparatorConfig(), Lifetime.Singleton);
+            }
+
+            #endregion
+
             #region Converters
 
             #if UNIT_JSON
+            if (!builder.Exists(typeof(JsonSerializerSettings)))
+            {
+                builder.Register(_ => new JsonSerializerSettings
+                {
+                    Culture                = CultureInfo.InvariantCulture,
+                    TypeNameHandling       = TypeNameHandling.Auto,
+                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                }, Lifetime.Singleton);
+            }
             builder.Register<JsonConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 

@@ -1,6 +1,6 @@
 #if UNIT_JSON
 #nullable enable
-namespace UniT.Data.Serialization
+namespace UniT.Data
 {
     public interface IJsonData : IData
     {

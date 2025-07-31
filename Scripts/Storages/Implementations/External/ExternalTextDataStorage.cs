@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using UniT.Extensions;
     #endif
 
-    public sealed class ExternalTextDataStorage : ReadOnlyDataStorage<string>
+    public sealed class ExternalTextDataStorage : DataStorage<string>
     {
         private readonly IExternalFileVersionManager externalFileVersionManager;
 

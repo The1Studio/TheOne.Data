@@ -2,7 +2,13 @@
 #nullable enable
 namespace UniT.Data.Conversion.DI
 {
+    using System;
+    using System.Globalization;
     using UniT.DI;
+    #if UNIT_JSON
+    using Newtonsoft.Json;
+    using JsonConverter = UniT.Data.Conversion.JsonConverter;
+    #endif
 
     public static class ConverterManagerDI
     {
@@ -10,9 +16,32 @@ namespace UniT.Data.Conversion.DI
         {
             if (container.Contains<IConverterManager>()) return;
 
+            #region Configs
+
+            if (!container.Contains<IFormatProvider>())
+            {
+                container.Add<IFormatProvider>(CultureInfo.InvariantCulture);
+            }
+            if (!container.Contains<SeparatorConfig>())
+            {
+                container.Add(new SeparatorConfig());
+            }
+
+            #endregion
+
             #region Converters
 
             #if UNIT_JSON
+            if (!container.Contains<JsonSerializerSettings>())
+            {
+                container.Add(new JsonSerializerSettings
+                {
+                    Culture                = CultureInfo.InvariantCulture,
+                    TypeNameHandling       = TypeNameHandling.Auto,
+                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                });
+            }
             container.AddInterfaces<JsonConverter>();
             #endif
 

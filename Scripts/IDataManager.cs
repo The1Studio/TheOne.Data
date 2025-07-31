@@ -2,6 +2,7 @@
 namespace UniT.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using UniT.Data.Storage;
     using UniT.Extensions;
@@ -17,6 +18,8 @@ namespace UniT.Data
         #region Sync
 
         public IData[] Load(string[] keys, Type[] types);
+
+        public void Update(string[] keys, IData[] datas);
 
         public void Save(string[] keys);
 
@@ -50,6 +53,8 @@ namespace UniT.Data
 
         public IData[] Load(Type[] types) => this.Load(GetKeys(types), types);
 
+        public void Update(IData[] datas) => this.Update(GetKeys(datas.Select(data => data.GetType()).ToArray()), datas);
+
         public void Save(Type[] types) => this.Save(GetKeys(types));
 
         public void Flush(Type[] types) => this.Flush(GetKeys(types));
@@ -68,6 +73,8 @@ namespace UniT.Data
 
         public IData Load(string key, Type type) => this.Load(new[] { key }, new[] { type })[0];
 
+        public void Update(string key, IData data) => this.Update(new[] { key }, new[] { data });
+
         public void Save(string key) => this.Save(new[] { key });
 
         public void Flush(string key) => this.Flush(new[] { key });
@@ -78,7 +85,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public T Load<T>(string key) where T : IReadableData => (T)this.Load(key, typeof(T));
+        public T Load<T>(string key) where T : IData => (T)this.Load(key, typeof(T));
 
         #endregion
 
@@ -90,6 +97,8 @@ namespace UniT.Data
 
         public IData Load(Type type) => this.Load(type.GetKey(), type);
 
+        public void Update(IData data) => this.Update(data.GetType().GetKey(), data);
+
         public void Save(Type type) => this.Save(type.GetKey());
 
         public void Flush(Type type) => this.Flush(type.GetKey());
@@ -100,7 +109,9 @@ namespace UniT.Data
 
         #region Generic
 
-        public T Load<T>() where T : IReadableData => (T)this.Load(typeof(T).GetKey(), typeof(T));
+        public T Load<T>() where T : IData => (T)this.Load(typeof(T).GetKey(), typeof(T));
+
+        public void Update<T>(T data) where T : IData => this.Update(typeof(T).GetKey(), data);
 
         public void Save<T>() where T : IWritableData => this.Save(typeof(T).GetKey());
 
@@ -185,7 +196,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IReadableData => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IData => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
         #endregion
 
@@ -207,7 +218,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IReadableData => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IData => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
         public UniTask SaveAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IWritableData => this.SaveAsync(typeof(T).GetKey(), progress, cancellationToken);
 
@@ -290,7 +301,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public IEnumerator LoadAsync<T>(string key, Action<T> callback, IProgress<float>? progress = null) where T : IReadableData => this.LoadAsync(key, typeof(T), data => callback((T)data), progress);
+        public IEnumerator LoadAsync<T>(string key, Action<T> callback, IProgress<float>? progress = null) where T : IData => this.LoadAsync(key, typeof(T), data => callback((T)data), progress);
 
         #endregion
 
@@ -312,7 +323,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public IEnumerator LoadAsync<T>(Action<T> callback, IProgress<float>? progress = null) where T : IReadableData => this.LoadAsync(typeof(T).GetKey(), typeof(T), data => callback((T)data), progress);
+        public IEnumerator LoadAsync<T>(Action<T> callback, IProgress<float>? progress = null) where T : IData => this.LoadAsync(typeof(T).GetKey(), typeof(T), data => callback((T)data), progress);
 
         public IEnumerator SaveAsync<T>(Action? callback = null, IProgress<float>? progress = null) where T : IWritableData => this.SaveAsync(typeof(T).GetKey(), callback, progress);
 
@@ -332,6 +343,6 @@ namespace UniT.Data
 
         #endregion
 
-        private static string[] GetKeys(Type[] types) => types.Select(type => type.GetKey()).ToArray();
+        private static string[] GetKeys(IEnumerable<Type> types) => types.Select(type => type.GetKey()).ToArray();
     }
 }

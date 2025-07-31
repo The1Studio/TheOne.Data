@@ -20,8 +20,9 @@ namespace UniT.Data
     {
         #region Constructor
 
-        private readonly IReadOnlyList<(ISerializer Serializer, IDataStorage Storage)> serializersAndStorages;
-        private readonly ILogger                                                       logger;
+        private readonly IReadOnlyList<ISerializer>  serializers;
+        private readonly IReadOnlyList<IDataStorage> storages;
+        private readonly ILogger                     logger;
 
         private readonly Dictionary<string, IData>                                        dataCache                 = new Dictionary<string, IData>();
         private readonly Dictionary<Type, (ISerializer Serializer, IDataStorage Storage)> serializerAndStorageCache = new Dictionary<Type, (ISerializer, IDataStorage)>();
@@ -29,10 +30,9 @@ namespace UniT.Data
         [Preserve]
         public DataManager(IEnumerable<ISerializer> serializers, IEnumerable<IDataStorage> storages, ILoggerManager loggerManager)
         {
-            this.serializersAndStorages = IterTools.Product(serializers, storages)
-                .Where((serializer, storage) => serializer.RawDataType == storage.RawDataType)
-                .ToArray();
-            this.logger = loggerManager.GetLogger(this);
+            this.serializers = serializers.ToArray();
+            this.storages    = storages.ToArray();
+            this.logger      = loggerManager.GetLogger(this);
             this.logger.Debug("Constructed");
         }
 
@@ -41,6 +41,8 @@ namespace UniT.Data
         #region Sync
 
         IData[] IDataManager.Load(string[] keys, Type[] types) => this.Load(keys, types);
+
+        void IDataManager.Update(string[] keys, IData[] datas) => this.Update(keys, datas);
 
         void IDataManager.Save(string[] keys) => this.Save(keys);
 
@@ -56,8 +58,7 @@ namespace UniT.Data
                 .Select((key, type) => this.dataCache.GetOrAdd(key, () =>
                 {
                     var (serializer, storage) = this.GetSerializerAndStorage(type);
-                    if (storage is not IReadableDataStorage readableStorage) throw new InvalidOperationException($"{key} is not readable");
-                    var rawData = readableStorage.Read(key);
+                    var rawData = storage.Read(key);
                     if (rawData is null)
                     {
                         var data = (IData)type.GetEmptyConstructor()();
@@ -72,6 +73,15 @@ namespace UniT.Data
                     }
                 }))
                 .ToArray();
+        }
+
+        private void Update(string[] keys, IData[] datas)
+        {
+            IterTools.Zip(keys, datas).ForEach((key, data) =>
+            {
+                this.dataCache[key] = data;
+                this.logger.Debug($"Updated {key}");
+            });
         }
 
         private void Save(IEnumerable<string> keys)
@@ -125,8 +135,7 @@ namespace UniT.Data
                 {
                     var (key, type)           = key_type;
                     var (serializer, storage) = this.GetSerializerAndStorage(type);
-                    if (storage is not IReadableDataStorage readableStorage) throw new InvalidOperationException($"{key} is not readable");
-                    var rawData = await readableStorage.ReadAsync(key, progress, cancellationToken);
+                    var rawData = await storage.ReadAsync(key, progress, cancellationToken);
                     if (rawData is null)
                     {
                         var data = (IData)type.GetEmptyConstructor()();
@@ -203,9 +212,8 @@ namespace UniT.Data
             IEnumerator LoadAsync(string key, Type type, Action<IData> callback, IProgress<float>? progress)
             {
                 var (serializer, storage) = this.GetSerializerAndStorage(type);
-                if (storage is not IReadableDataStorage readableStorage) throw new InvalidOperationException($"{key} is not readable");
                 var rawData = default(object);
-                yield return readableStorage.ReadAsync(key, result => rawData = result, progress);
+                yield return storage.ReadAsync(key, result => rawData = result, progress);
                 if (rawData is null)
                 {
                     callback((IData)type.GetEmptyConstructor()());
@@ -264,7 +272,12 @@ namespace UniT.Data
         {
             return this.serializerAndStorageCache.GetOrAdd(type, () =>
             {
-                var serializersAndStorages = this.serializersAndStorages.Where((serializer, storage) => serializer.CanSerialize(type) && storage.CanStore(type)).ToArray();
+                var serializersAndStorages = IterTools.Product(
+                        this.serializers.Where(serializer => serializer.CanSerialize(type)),
+                        this.storages.Where(storage => storage.CanStore(type))
+                    )
+                    .Where((serializer, storage) => serializer.RawDataType == storage.RawDataType)
+                    .ToArray();
                 if (serializersAndStorages.Length is 0) throw new InvalidOperationException($"No serializer or storage found for {type.Name}");
                 return serializersAndStorages[^1];
             });

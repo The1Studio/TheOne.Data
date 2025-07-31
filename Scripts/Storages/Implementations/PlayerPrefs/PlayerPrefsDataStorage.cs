@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using System.Collections;
     #endif
 
-    public sealed class PlayerPrefsDataStorage : ReadWriteDataStorage<string>
+    public sealed class PlayerPrefsDataStorage : RuntimeWritableDataStorage<string>
     {
         [Preserve]
         public PlayerPrefsDataStorage()

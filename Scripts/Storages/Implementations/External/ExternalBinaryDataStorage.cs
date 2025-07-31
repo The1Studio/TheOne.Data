@@ -12,7 +12,7 @@ namespace UniT.Data.Storage
     using UniT.Extensions;
     #endif
 
-    public sealed class ExternalBinaryDataStorage : ReadOnlyDataStorage<byte[]>
+    public sealed class ExternalBinaryDataStorage : DataStorage<byte[]>
     {
         private readonly IExternalFileVersionManager externalFileVersionManager;
 

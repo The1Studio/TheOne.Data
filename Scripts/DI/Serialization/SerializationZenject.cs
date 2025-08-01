@@ -6,6 +6,7 @@ namespace UniT.Data.Serialization.DI
     using Zenject;
     #if UNIT_JSON
     using Newtonsoft.Json;
+    using JsonSerializer = UniT.Data.Serialization.JsonSerializer;
     #endif
     #if UNIT_CSV
     using CsvHelper.Configuration;

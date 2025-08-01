@@ -15,7 +15,7 @@ namespace UniT.Data.Storage
 
         bool IDataStorage.CanStore(Type type) => this.CanStore(type);
 
-        protected virtual bool CanStore(Type type) => typeof(IData).IsAssignableFrom(type);
+        protected virtual bool CanStore(Type type) => !typeof(IWritableData).IsAssignableFrom(type);
 
         #region Sync
 

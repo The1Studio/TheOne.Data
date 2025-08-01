@@ -10,24 +10,26 @@ namespace UniT.Data.Serialization
     using UniT.Extensions;
     #endif
 
-    public abstract class Serializer<TRawData, TData> : ISerializer where TRawData : notnull where TData : IData
+    public abstract class Serializer<TRawData, TData> : ISerializer where TRawData : notnull where TData : notnull
     {
         Type ISerializer.RawDataType => typeof(TRawData);
 
         bool ISerializer.CanSerialize(Type type) => typeof(TData).IsAssignableFrom(type);
 
-        IData ISerializer.Deserialize(Type type, object rawData) => this.Deserialize(type, (TRawData)rawData);
+        object ISerializer.Deserialize(Type type, object rawData) => this.Deserialize(type, (TRawData)rawData);
 
-        object ISerializer.Serialize(IData data) => this.Serialize((TData)data);
+        object ISerializer.Serialize(object data) => this.Serialize((TData)data);
 
         public abstract TData Deserialize(Type type, TRawData rawData);
 
         public abstract TRawData Serialize(TData data);
 
-        #if UNIT_UNITASK
-        UniTask<IData> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken) => this.DeserializeAsync(type, (TRawData)rawData, cancellationToken).ContinueWith(data => (IData)data);
+        public T Deserialize<T>(TRawData rawData) where T : TData => (T)this.Deserialize(typeof(T), rawData);
 
-        UniTask<object> ISerializer.SerializeAsync(IData data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);
+        #if UNIT_UNITASK
+        UniTask<object> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken) => this.DeserializeAsync(type, (TRawData)rawData, cancellationToken).ContinueWith(data => (object)data);
+
+        UniTask<object> ISerializer.SerializeAsync(object data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);
 
         public virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken)
         {
@@ -47,9 +49,9 @@ namespace UniT.Data.Serialization
             #endif
         }
         #else
-        IEnumerator ISerializer.DeserializeAsync(Type type, object rawData, Action<IData> callback) => this.DeserializeAsync(type, (TRawData)rawData, data => callback(data));
+        IEnumerator ISerializer.DeserializeAsync(Type type, object rawData, Action<object> callback) => this.DeserializeAsync(type, (TRawData)rawData, data => callback(data));
 
-        IEnumerator ISerializer.SerializeAsync(IData data, Action<object> callback) => this.SerializeAsync((TData)data, rawData => callback(rawData));
+        IEnumerator ISerializer.SerializeAsync(object data, Action<object> callback) => this.SerializeAsync((TData)data, rawData => callback(rawData));
 
         public virtual IEnumerator DeserializeAsync(Type type, TRawData rawData, Action<TData> callback) => CoroutineRunner.Run(() => this.Deserialize(type, rawData), callback);
 

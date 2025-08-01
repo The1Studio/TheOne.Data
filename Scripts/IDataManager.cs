@@ -4,7 +4,6 @@ namespace UniT.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Data.Storage;
     using UniT.Extensions;
     #if UNIT_UNITASK
     using System.Threading;
@@ -17,9 +16,9 @@ namespace UniT.Data
     {
         #region Sync
 
-        public IData[] Load(string[] keys, Type[] types);
+        public object[] Load(string[] keys, Type[] types);
 
-        public void Update(string[] keys, IData[] datas);
+        public void Update(string[] keys, object[] datas);
 
         public void Save(string[] keys);
 
@@ -51,9 +50,9 @@ namespace UniT.Data
 
         #region Implicit Key
 
-        public IData[] Load(Type[] types) => this.Load(GetKeys(types), types);
+        public object[] Load(Type[] types) => this.Load(GetKeys(types), types);
 
-        public void Update(IData[] datas) => this.Update(GetKeys(datas.Select(data => data.GetType()).ToArray()), datas);
+        public void Update(object[] datas) => this.Update(GetKeys(datas.Select(data => data.GetType()).ToArray()), datas);
 
         public void Save(Type[] types) => this.Save(GetKeys(types));
 
@@ -71,9 +70,9 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public IData Load(string key, Type type) => this.Load(new[] { key }, new[] { type })[0];
+        public object Load(string key, Type type) => this.Load(new[] { key }, new[] { type })[0];
 
-        public void Update(string key, IData data) => this.Update(new[] { key }, new[] { data });
+        public void Update(string key, object data) => this.Update(new[] { key }, new[] { data });
 
         public void Save(string key) => this.Save(new[] { key });
 
@@ -85,7 +84,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public T Load<T>(string key) where T : IData => (T)this.Load(key, typeof(T));
+        public T Load<T>(string key) => (T)this.Load(key, typeof(T));
 
         #endregion
 
@@ -95,9 +94,9 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public IData Load(Type type) => this.Load(type.GetKey(), type);
+        public object Load(Type type) => this.Load(type.GetKey(), type);
 
-        public void Update(IData data) => this.Update(data.GetType().GetKey(), data);
+        public void Update(object data) => this.Update(data.GetType().GetKey(), data);
 
         public void Save(Type type) => this.Save(type.GetKey());
 
@@ -109,15 +108,15 @@ namespace UniT.Data
 
         #region Generic
 
-        public T Load<T>() where T : IData => (T)this.Load(typeof(T).GetKey(), typeof(T));
+        public T Load<T>() => (T)this.Load(typeof(T).GetKey(), typeof(T));
 
-        public void Update<T>(T data) where T : IData => this.Update(typeof(T).GetKey(), data);
+        public void Update<T>(T data) => this.Update(typeof(T).GetKey(), data);
 
-        public void Save<T>() where T : IWritableData => this.Save(typeof(T).GetKey());
+        public void Save<T>() => this.Save(typeof(T).GetKey());
 
-        public void Flush<T>() where T : IWritableData => this.Flush(typeof(T).GetKey());
+        public void Flush<T>() => this.Flush(typeof(T).GetKey());
 
-        public void SaveAndFlush<T>() where T : IWritableData => this.SaveAndFlush(typeof(T).GetKey());
+        public void SaveAndFlush<T>() => this.SaveAndFlush(typeof(T).GetKey());
 
         #endregion
 
@@ -132,7 +131,7 @@ namespace UniT.Data
         #region Async
 
         #if UNIT_UNITASK
-        public UniTask<IData[]> LoadAsync(string[] keys, Type[] types, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
+        public UniTask<object[]> LoadAsync(string[] keys, Type[] types, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public UniTask SaveAsync(string[] keys, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
@@ -166,7 +165,7 @@ namespace UniT.Data
 
         #region Implicit Key
 
-        public UniTask<IData[]> LoadAsync(Type[] types, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(GetKeys(types), types, progress, cancellationToken);
+        public UniTask<object[]> LoadAsync(Type[] types, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(GetKeys(types), types, progress, cancellationToken);
 
         public UniTask SaveAsync(Type[] types, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(GetKeys(types), progress, cancellationToken);
 
@@ -184,7 +183,7 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public UniTask<IData> LoadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(new[] { key }, new[] { type }, progress, cancellationToken).ContinueWith(datas => datas[0]);
+        public UniTask<object> LoadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(new[] { key }, new[] { type }, progress, cancellationToken).ContinueWith(datas => datas[0]);
 
         public UniTask SaveAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(new[] { key }, progress, cancellationToken);
 
@@ -196,7 +195,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IData => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
         #endregion
 
@@ -206,7 +205,7 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public UniTask<IData> LoadAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(type.GetKey(), type, progress, cancellationToken);
+        public UniTask<object> LoadAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(type.GetKey(), type, progress, cancellationToken);
 
         public UniTask SaveAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(type.GetKey(), progress, cancellationToken);
 
@@ -218,13 +217,13 @@ namespace UniT.Data
 
         #region Generic
 
-        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IData => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
-        public UniTask SaveAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IWritableData => this.SaveAsync(typeof(T).GetKey(), progress, cancellationToken);
+        public UniTask SaveAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(typeof(T).GetKey(), progress, cancellationToken);
 
-        public UniTask FlushAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IWritableData => this.FlushAsync(typeof(T).GetKey(), progress, cancellationToken);
+        public UniTask FlushAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.FlushAsync(typeof(T).GetKey(), progress, cancellationToken);
 
-        public UniTask SaveAndFlushAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : IWritableData => this.SaveAndFlushAsync(typeof(T).GetKey(), progress, cancellationToken);
+        public UniTask SaveAndFlushAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAndFlushAsync(typeof(T).GetKey(), progress, cancellationToken);
 
         #endregion
 
@@ -235,7 +234,7 @@ namespace UniT.Data
         #endregion
 
         #else
-        public IEnumerator LoadAsync(string[] keys, Type[] types, Action<IData[]> callback, IProgress<float>? progress = null);
+        public IEnumerator LoadAsync(string[] keys, Type[] types, Action<object[]> callback, IProgress<float>? progress = null);
 
         public IEnumerator SaveAsync(string[] keys, Action? callback = null, IProgress<float>? progress = null);
 
@@ -271,7 +270,7 @@ namespace UniT.Data
 
         #region Implicit Key
 
-        public IEnumerator LoadAsync(Type[] types, Action<IData[]> callback, IProgress<float>? progress = null) => this.LoadAsync(GetKeys(types), types, callback, progress);
+        public IEnumerator LoadAsync(Type[] types, Action<object[]> callback, IProgress<float>? progress = null) => this.LoadAsync(GetKeys(types), types, callback, progress);
 
         public IEnumerator SaveAsync(Type[] types, Action? callback = null, IProgress<float>? progress = null) => this.SaveAsync(GetKeys(types), callback, progress);
 
@@ -289,7 +288,7 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public IEnumerator LoadAsync(string key, Type type, Action<IData> callback, IProgress<float>? progress = null) => this.LoadAsync(new[] { key }, new[] { type }, datas => callback(datas[0]), progress);
+        public IEnumerator LoadAsync(string key, Type type, Action<object> callback, IProgress<float>? progress = null) => this.LoadAsync(new[] { key }, new[] { type }, datas => callback(datas[0]), progress);
 
         public IEnumerator SaveAsync(string key, Action? callback = null, IProgress<float>? progress = null) => this.SaveAsync(new[] { key }, callback, progress);
 
@@ -301,7 +300,7 @@ namespace UniT.Data
 
         #region Generic
 
-        public IEnumerator LoadAsync<T>(string key, Action<T> callback, IProgress<float>? progress = null) where T : IData => this.LoadAsync(key, typeof(T), data => callback((T)data), progress);
+        public IEnumerator LoadAsync<T>(string key, Action<T> callback, IProgress<float>? progress = null) => this.LoadAsync(key, typeof(T), data => callback((T)data), progress);
 
         #endregion
 
@@ -311,7 +310,7 @@ namespace UniT.Data
 
         #region Non-Generic
 
-        public IEnumerator LoadAsync(Type type, Action<IData> callback, IProgress<float>? progress = null) => this.LoadAsync(type.GetKey(), type, callback, progress);
+        public IEnumerator LoadAsync(Type type, Action<object> callback, IProgress<float>? progress = null) => this.LoadAsync(type.GetKey(), type, callback, progress);
 
         public IEnumerator SaveAsync(Type type, Action? callback = null, IProgress<float>? progress = null) => this.SaveAsync(type.GetKey(), callback, progress);
 
@@ -323,13 +322,13 @@ namespace UniT.Data
 
         #region Generic
 
-        public IEnumerator LoadAsync<T>(Action<T> callback, IProgress<float>? progress = null) where T : IData => this.LoadAsync(typeof(T).GetKey(), typeof(T), data => callback((T)data), progress);
+        public IEnumerator LoadAsync<T>(Action<T> callback, IProgress<float>? progress = null) => this.LoadAsync(typeof(T).GetKey(), typeof(T), data => callback((T)data), progress);
 
-        public IEnumerator SaveAsync<T>(Action? callback = null, IProgress<float>? progress = null) where T : IWritableData => this.SaveAsync(typeof(T).GetKey(), callback, progress);
+        public IEnumerator SaveAsync<T>(Action? callback = null, IProgress<float>? progress = null) => this.SaveAsync(typeof(T).GetKey(), callback, progress);
 
-        public IEnumerator FlushAsync<T>(Action? callback = null, IProgress<float>? progress = null) where T : IWritableData => this.FlushAsync(typeof(T).GetKey(), callback, progress);
+        public IEnumerator FlushAsync<T>(Action? callback = null, IProgress<float>? progress = null) => this.FlushAsync(typeof(T).GetKey(), callback, progress);
 
-        public IEnumerator SaveAndFlushAsync<T>(Action? callback = null, IProgress<float>? progress = null) where T : IWritableData => this.SaveAndFlushAsync(typeof(T).GetKey(), callback, progress);
+        public IEnumerator SaveAndFlushAsync<T>(Action? callback = null, IProgress<float>? progress = null) => this.SaveAndFlushAsync(typeof(T).GetKey(), callback, progress);
 
         #endregion
 

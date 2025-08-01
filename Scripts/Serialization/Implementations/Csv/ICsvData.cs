@@ -5,7 +5,7 @@ namespace UniT.Data
     using System;
     using System.Collections;
 
-    public interface ICsvData : IData
+    public interface ICsvData
     {
         public Type RowType { get; }
 

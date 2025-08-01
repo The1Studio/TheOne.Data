@@ -15,18 +15,18 @@ namespace UniT.Data.Serialization
 
         public bool CanSerialize(Type type);
 
-        public IData Deserialize(Type type, object rawData);
+        public object Deserialize(Type type, object rawData);
 
-        public object Serialize(IData data);
+        public object Serialize(object data);
 
         #if UNIT_UNITASK
-        public UniTask<IData> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default);
+        public UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default);
 
-        public UniTask<object> SerializeAsync(IData data, CancellationToken cancellationToken = default);
+        public UniTask<object> SerializeAsync(object data, CancellationToken cancellationToken = default);
         #else
-        public IEnumerator DeserializeAsync(Type type, object rawData, Action<IData> callback);
+        public IEnumerator DeserializeAsync(Type type, object rawData, Action<object> callback);
 
-        public IEnumerator SerializeAsync(IData data, Action<object> callback);
+        public IEnumerator SerializeAsync(object data, Action<object> callback);
         #endif
     }
 }

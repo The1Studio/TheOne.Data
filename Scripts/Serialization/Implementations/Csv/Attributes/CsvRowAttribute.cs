@@ -1,6 +1,6 @@
 ﻿#if UNIT_CSV
 #nullable enable
-namespace UniT.Data.Serialization
+namespace UniT.Data
 {
     using System;
     using System.Reflection;

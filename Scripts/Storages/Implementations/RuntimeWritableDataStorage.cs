@@ -3,8 +3,8 @@ namespace UniT.Data.Storage
 {
     using System;
 
-    public abstract class RuntimeWritableDataStorage<TRawData> : WritableDataStorage<TRawData>, IRuntimeWritableDataStorage
+    public abstract class RuntimeWritableDataStorage<TRawData> : EditorWritableDataStorage<TRawData>
     {
-        protected override bool CanStore(Type type) => base.CanStore(type) && typeof(IRuntimeWritableData).IsAssignableFrom(type);
+        protected override bool CanStore(Type type) => typeof(IWritableData).IsAssignableFrom(type);
     }
 }

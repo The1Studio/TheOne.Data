@@ -110,7 +110,7 @@ namespace UniT.Data
 
         public T Load<T>() => (T)this.Load(typeof(T).GetKey(), typeof(T));
 
-        public void Update<T>(T data) => this.Update(typeof(T).GetKey(), data);
+        public void Update<T>(T data) where T : notnull => this.Update(typeof(T).GetKey(), data);
 
         public void Save<T>() => this.Save(typeof(T).GetKey());
 

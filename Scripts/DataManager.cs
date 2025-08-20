@@ -40,7 +40,7 @@ namespace UniT.Data
 
         #region Sync
 
-        object[] IDataManager.Load(string[] keys, Type[] types) => this.Load(keys, types);
+        object[] IDataManager.Load(string[] keys, Type[] types, bool cache) => this.Load(keys, types, cache);
 
         void IDataManager.Update(string[] keys, object[] datas) => this.Update(keys, datas);
 
@@ -52,27 +52,32 @@ namespace UniT.Data
 
         void IDataManager.FlushAll() => this.Flush(this.WritableKeys);
 
-        private object[] Load(string[] keys, Type[] types)
+        private object[] Load(string[] keys, Type[] types, bool cache)
         {
             return IterTools.Zip(keys, types)
-                .Select((key, type) => this.dataCache.GetOrAdd(key, () =>
-                {
-                    var (serializer, storage) = this.GetSerializerAndStorage(type);
-                    var rawData = storage.Read(key);
-                    if (rawData is null)
-                    {
-                        var data = type.GetEmptyConstructor()();
-                        this.logger.Debug($"Instantiated {key}");
-                        return data;
-                    }
-                    else
-                    {
-                        var data = serializer.Deserialize(type, rawData);
-                        this.logger.Debug($"Loaded {key}");
-                        return data;
-                    }
-                }))
+                .Select((key, type) => cache
+                    ? this.dataCache.GetOrAdd(key, () => Load(key, type))
+                    : Load(key, type)
+                )
                 .ToArray();
+
+            object Load(string key, Type type)
+            {
+                var (serializer, storage) = this.GetSerializerAndStorage(type);
+                var rawData = storage.Read(key);
+                if (rawData is null)
+                {
+                    var data = type.GetEmptyConstructor()();
+                    this.logger.Debug($"Instantiated {key}");
+                    return data;
+                }
+                else
+                {
+                    var data = serializer.Deserialize(type, rawData);
+                    this.logger.Debug($"Loaded {key}");
+                    return data;
+                }
+            }
         }
 
         private void Update(string[] keys, object[] datas)
@@ -118,7 +123,7 @@ namespace UniT.Data
         #region Async
 
         #if UNIT_UNITASK
-        UniTask<object[]> IDataManager.LoadAsync(string[] keys, Type[] types, IProgress<float>? progress, CancellationToken cancellationToken) => this.LoadAsync(keys, types, progress, cancellationToken);
+        UniTask<object[]> IDataManager.LoadAsync(string[] keys, Type[] types, bool cache, IProgress<float>? progress, CancellationToken cancellationToken) => this.LoadAsync(keys, types, cache, progress, cancellationToken);
 
         UniTask IDataManager.SaveAsync(string[] keys, IProgress<float>? progress, CancellationToken cancellationToken) => this.SaveAsync(keys, progress, cancellationToken);
 
@@ -128,30 +133,33 @@ namespace UniT.Data
 
         UniTask IDataManager.FlushAllAsync(IProgress<float>? progress, CancellationToken cancellationToken) => this.FlushAsync(this.WritableKeys, progress, cancellationToken);
 
-        private UniTask<object[]> LoadAsync(string[] keys, Type[] types, IProgress<float>? progress, CancellationToken cancellationToken)
+        private UniTask<object[]> LoadAsync(string[] keys, Type[] types, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return IterTools.Zip(keys, types).SelectAsync(
-                (key_type, progress, cancellationToken) => this.dataCache.GetOrAddAsync(key_type.Item1, async () =>
-                {
-                    var (key, type)           = key_type;
-                    var (serializer, storage) = this.GetSerializerAndStorage(type);
-                    var rawData = await storage.ReadAsync(key, progress, cancellationToken);
-                    if (rawData is null)
-                    {
-                        var data = type.GetEmptyConstructor()();
-                        this.logger.Debug($"Instantiated {key}");
-                        return data;
-                    }
-                    else
-                    {
-                        var data = await serializer.DeserializeAsync(type, rawData, cancellationToken);
-                        this.logger.Debug($"Loaded {key}");
-                        return data;
-                    }
-                }),
+                (key_type, progress, cancellationToken) => cache
+                    ? this.dataCache.GetOrAddAsync(key_type.Item1, () => LoadAsync(key_type.Item1, key_type.Item2, progress, cancellationToken))
+                    : LoadAsync(key_type.Item1, key_type.Item2, progress, cancellationToken),
                 progress,
                 cancellationToken
             ).ToArrayAsync();
+
+            async UniTask<object> LoadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+            {
+                var (serializer, storage) = this.GetSerializerAndStorage(type);
+                var rawData = await storage.ReadAsync(key, progress, cancellationToken);
+                if (rawData is null)
+                {
+                    var data = type.GetEmptyConstructor()();
+                    this.logger.Debug($"Instantiated {key}");
+                    return data;
+                }
+                else
+                {
+                    var data = await serializer.DeserializeAsync(type, rawData, cancellationToken);
+                    this.logger.Debug($"Loaded {key}");
+                    return data;
+                }
+            }
         }
 
         private UniTask SaveAsync(IEnumerable<string> keys, IProgress<float>? progress, CancellationToken cancellationToken)
@@ -191,7 +199,7 @@ namespace UniT.Data
                 );
         }
         #else
-        IEnumerator IDataManager.LoadAsync(string[] keys, Type[] types, Action<object[]> callback, IProgress<float>? progress) => this.LoadAsync(keys, types, callback, progress);
+        IEnumerator IDataManager.LoadAsync(string[] keys, Type[] types, Action<object[]> callback, bool cache, IProgress<float>? progress) => this.LoadAsync(keys, types, callback, cache, progress);
 
         IEnumerator IDataManager.SaveAsync(string[] keys, Action? callback, IProgress<float>? progress) => this.SaveAsync(keys, callback, progress);
 
@@ -201,10 +209,12 @@ namespace UniT.Data
 
         IEnumerator IDataManager.FlushAllAsync(Action? callback, IProgress<float>? progress) => this.FlushAsync(this.WritableKeys, callback, progress);
 
-        private IEnumerator LoadAsync(string[] keys, Type[] types, Action<object[]> callback, IProgress<float>? progress)
+        private IEnumerator LoadAsync(string[] keys, Type[] types, Action<object[]> callback, bool cache, IProgress<float>? progress)
         {
             return IterTools.Zip(keys, types).SelectAsync<(string, Type), object>(
-                (key_type, callback, progress) => this.dataCache.GetOrAddAsync(key_type.Item1, callback => LoadAsync(key_type.Item1, key_type.Item2, callback, progress), callback),
+                (key_type, callback, progress) => cache
+                    ? this.dataCache.GetOrAddAsync(key_type.Item1, callback => LoadAsync(key_type.Item1, key_type.Item2, callback, progress), callback)
+                    : LoadAsync(key_type.Item1, key_type.Item2, callback, progress),
                 datas => callback(datas.ToArray()),
                 progress
             );

@@ -16,8 +16,6 @@ namespace UniT.Data.Serialization.DI
     {
         public static void RegisterSerializers(this IContainerBuilder builder)
         {
-            builder.Register<ObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-
             #if UNIT_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
@@ -31,6 +29,8 @@ namespace UniT.Data.Serialization.DI
             }
             builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
+
+            builder.Register<UnityObjectSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
             #if UNIT_CSV
             if (!builder.Exists(typeof(CsvConfiguration)))

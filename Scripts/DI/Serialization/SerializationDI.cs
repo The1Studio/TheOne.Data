@@ -16,8 +16,6 @@ namespace UniT.Data.Serialization.DI
     {
         public static void AddSerializers(this DependencyContainer container)
         {
-            container.AddInterfacesAndSelf<ObjectSerializer>();
-
             #if UNIT_JSON
             if (!container.Contains<JsonSerializerSettings>())
             {
@@ -31,6 +29,8 @@ namespace UniT.Data.Serialization.DI
             }
             container.AddInterfacesAndSelf<JsonSerializer>();
             #endif
+
+            container.AddInterfacesAndSelf<UnityObjectSerializer>();
 
             #if UNIT_CSV
             if (!container.Contains<CsvConfiguration>())

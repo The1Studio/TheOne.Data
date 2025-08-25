@@ -16,8 +16,6 @@ namespace UniT.Data.Serialization.DI
     {
         public static void BindSerializers(this DiContainer container)
         {
-            container.BindInterfacesAndSelfTo<ObjectSerializer>().AsSingle();
-
             #if UNIT_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
@@ -31,6 +29,8 @@ namespace UniT.Data.Serialization.DI
             }
             container.BindInterfacesAndSelfTo<JsonSerializer>().AsSingle();
             #endif
+
+            container.BindInterfacesAndSelfTo<UnityObjectSerializer>().AsSingle();
 
             #if UNIT_CSV
             if (!container.HasBinding<CsvConfiguration>())

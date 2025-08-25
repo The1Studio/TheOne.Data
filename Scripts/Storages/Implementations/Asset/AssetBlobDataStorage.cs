@@ -15,7 +15,7 @@ namespace UniT.Data.Storage
     using UnityEditor;
     #endif
 
-    public sealed class AssetBlobDataStorage : EditorWritableDataStorage<object>
+    public sealed class AssetBlobDataStorage : EditorWritableDataStorage<Object>
     {
         private readonly IAssetsManager assetsManager;
 
@@ -25,12 +25,12 @@ namespace UniT.Data.Storage
             this.assetsManager = assetsManager;
         }
 
-        protected override object? Read(string key)
+        protected override Object? Read(string key)
         {
             return this.assetsManager.Load<Object>(key);
         }
 
-        protected override void Write(string key, object value)
+        protected override void Write(string key, Object value)
         {
         }
 
@@ -42,13 +42,12 @@ namespace UniT.Data.Storage
         }
 
         #if UNIT_UNITASK
-        protected override UniTask<object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        protected override UniTask<Object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return this.assetsManager.LoadAsync<Object>(key, progress, cancellationToken)
-                .ContinueWith(asset => (object?)asset);
+            return this.assetsManager.LoadAsync<Object>(key, progress, cancellationToken)!;
         }
 
-        protected override UniTask WriteAsync(string key, object value, IProgress<float>? progress, CancellationToken cancellationToken)
+        protected override UniTask WriteAsync(string key, Object value, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return UniTask.CompletedTask;
         }
@@ -61,12 +60,12 @@ namespace UniT.Data.Storage
             return UniTask.CompletedTask;
         }
         #else
-        protected override IEnumerator ReadAsync(string key, Action<object?> callback, IProgress<float>? progress)
+        protected override IEnumerator ReadAsync(string key, Action<Object?> callback, IProgress<float>? progress)
         {
             return this.assetsManager.LoadAsync<Object>(key, callback, progress);
         }
 
-        protected override IEnumerator WriteAsync(string key, object value, Action? callback, IProgress<float>? progress)
+        protected override IEnumerator WriteAsync(string key, Object value, Action? callback, IProgress<float>? progress)
         {
             yield break;
         }

@@ -6,7 +6,7 @@ namespace UniT.Data.Serialization
     using Newtonsoft.Json;
     using UnityEngine.Scripting;
 
-    public sealed class JsonSerializer : Serializer<string, IJsonData>
+    public sealed class JsonSerializer : Serializer<string, object>
     {
         private readonly JsonSerializerSettings settings;
 
@@ -16,12 +16,12 @@ namespace UniT.Data.Serialization
             this.settings = settings;
         }
 
-        public override IJsonData Deserialize(Type type, string rawData)
+        public override object Deserialize(Type type, string rawData)
         {
-            return (IJsonData)JsonConvert.DeserializeObject(rawData, type, this.settings)!;
+            return JsonConvert.DeserializeObject(rawData, type, this.settings)!;
         }
 
-        public override string Serialize(IJsonData data)
+        public override string Serialize(object data)
         {
             return JsonConvert.SerializeObject(data, this.settings);
         }

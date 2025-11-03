@@ -42,11 +42,7 @@ namespace UniT.Data.Serialization
 
         public virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken)
         {
-            #if !UNITY_WEBGL
-            return UniTask.RunOnThreadPool(() => this.Serialize(data), cancellationToken: cancellationToken);
-            #else
             return UniTask.FromResult(this.Serialize(data));
-            #endif
         }
         #else
         IEnumerator ISerializer.DeserializeAsync(Type type, object rawData, Action<object> callback) => this.DeserializeAsync(type, (TRawData)rawData, data => callback(data));
@@ -55,7 +51,11 @@ namespace UniT.Data.Serialization
 
         public virtual IEnumerator DeserializeAsync(Type type, TRawData rawData, Action<TData> callback) => CoroutineRunner.Run(() => this.Deserialize(type, rawData), callback);
 
-        public virtual IEnumerator SerializeAsync(TData data, Action<TRawData> callback) => CoroutineRunner.Run(() => this.Serialize(data), callback);
+        public virtual IEnumerator SerializeAsync(TData data, Action<TRawData> callback)
+        {
+            callback(this.Serialize(data));
+            yield break;
+        }
         #endif
     }
 }

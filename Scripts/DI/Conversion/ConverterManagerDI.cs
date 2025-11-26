@@ -7,7 +7,7 @@ namespace UniT.Data.Conversion.DI
     using UniT.DI;
     #if UNIT_JSON
     using Newtonsoft.Json;
-    using JsonConverter = UniT.Data.Conversion.JsonConverter;
+    using JsonConverter = JsonConverter;
     #endif
 
     public static class ConverterManagerDI
@@ -34,13 +34,7 @@ namespace UniT.Data.Conversion.DI
             #if UNIT_JSON
             if (!container.Contains<JsonSerializerSettings>())
             {
-                container.Add(new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                });
+                container.Add(DefaultJsonSerializerSettings.Value);
             }
             container.AddInterfaces<JsonConverter>();
             #endif

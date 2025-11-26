@@ -6,7 +6,7 @@ namespace UniT.Data.Serialization.DI
     using Zenject;
     #if UNIT_JSON
     using Newtonsoft.Json;
-    using JsonSerializer = UniT.Data.Serialization.JsonSerializer;
+    using JsonSerializer = JsonSerializer;
     #endif
     #if UNIT_CSV
     using CsvHelper.Configuration;
@@ -19,13 +19,7 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
-                container.Bind<JsonSerializerSettings>().FromMethod(() => new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                }).AsSingle();
+                container.Bind<JsonSerializerSettings>().FromMethod(() => DefaultJsonSerializerSettings.Value).AsSingle();
             }
             container.BindInterfacesAndSelfTo<JsonSerializer>().AsSingle();
             #endif

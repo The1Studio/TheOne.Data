@@ -7,7 +7,7 @@ namespace UniT.Data.Conversion.DI
     using VContainer;
     #if UNIT_JSON
     using Newtonsoft.Json;
-    using JsonConverter = UniT.Data.Conversion.JsonConverter;
+    using JsonConverter = JsonConverter;
     #endif
 
     public static class ConverterManagerVContainer
@@ -34,13 +34,7 @@ namespace UniT.Data.Conversion.DI
             #if UNIT_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
-                builder.Register(_ => new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                }, Lifetime.Singleton);
+                builder.Register(_ => DefaultJsonSerializerSettings.Value, Lifetime.Singleton);
             }
             builder.Register<JsonConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif

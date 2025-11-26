@@ -7,7 +7,7 @@ namespace UniT.Data.Conversion.DI
     using Zenject;
     #if UNIT_JSON
     using Newtonsoft.Json;
-    using JsonConverter = UniT.Data.Conversion.JsonConverter;
+    using JsonConverter = JsonConverter;
     #endif
 
     public static class ConverterManagerZenject
@@ -34,13 +34,7 @@ namespace UniT.Data.Conversion.DI
             #if UNIT_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
-                container.Bind<JsonSerializerSettings>().FromMethod(() => new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                }).AsSingle();
+                container.Bind<JsonSerializerSettings>().FromMethod(() => DefaultJsonSerializerSettings.Value).AsSingle();
             }
             container.BindInterfacesTo<JsonConverter>().AsSingle();
             #endif

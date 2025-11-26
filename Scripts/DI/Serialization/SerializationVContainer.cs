@@ -6,7 +6,7 @@ namespace UniT.Data.Serialization.DI
     using VContainer;
     #if UNIT_JSON
     using Newtonsoft.Json;
-    using JsonSerializer = UniT.Data.Serialization.JsonSerializer;
+    using JsonSerializer = JsonSerializer;
     #endif
     #if UNIT_CSV
     using CsvHelper.Configuration;
@@ -19,13 +19,7 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
-                builder.Register(_ => new JsonSerializerSettings
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                }, Lifetime.Singleton);
+                builder.Register(_ => DefaultJsonSerializerSettings.Value, Lifetime.Singleton);
             }
             builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif

@@ -1,3 +1,4 @@
+#if UNIT_JSON
 #nullable enable
 namespace UniT.Data
 {
@@ -48,3 +49,4 @@ namespace UniT.Data
         }
     }
 }
+#endif

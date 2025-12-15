@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿#if UNIT_JSON
+#nullable enable
 namespace UniT.Data.Storage
 {
     using System;
@@ -296,3 +297,4 @@ namespace UniT.Data.Storage
         }
     }
 }
+#endif

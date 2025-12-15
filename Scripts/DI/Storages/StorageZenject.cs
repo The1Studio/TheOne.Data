@@ -18,6 +18,7 @@ namespace UniT.Data.Storage.DI
             container.BindInterfacesTo<PlayerPrefsDataStorage>().AsSingle();
         }
 
+        #if UNIT_JSON
         public static void BindExternalDataStorages(this DiContainer container)
         {
             container.BindExternalAssetsManager();
@@ -27,6 +28,7 @@ namespace UniT.Data.Storage.DI
             container.BindInterfacesTo<ExternalBinaryDataStorage>().AsSingle();
             container.BindInterfacesTo<ExternalTextDataStorage>().AsSingle();
         }
+        #endif
     }
 }
 #endif

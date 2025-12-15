@@ -18,6 +18,7 @@ namespace UniT.Data.Storage.DI
             container.AddInterfaces<PlayerPrefsDataStorage>();
         }
 
+        #if UNIT_JSON
         public static void AddExternalDataStorages(this DependencyContainer container)
         {
             container.AddExternalAssetsManager();
@@ -27,6 +28,7 @@ namespace UniT.Data.Storage.DI
             container.AddInterfaces<ExternalBinaryDataStorage>();
             container.AddInterfaces<ExternalTextDataStorage>();
         }
+        #endif
     }
 }
 #endif

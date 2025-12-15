@@ -18,6 +18,7 @@ namespace UniT.Data.Storage.DI
             builder.Register<PlayerPrefsDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
+        #if UNIT_JSON
         public static void RegisterExternalDataStorages(this IContainerBuilder builder)
         {
             builder.RegisterExternalAssetsManager();
@@ -27,6 +28,7 @@ namespace UniT.Data.Storage.DI
             builder.Register<ExternalBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ExternalTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
         }
+        #endif
     }
 }
 #endif

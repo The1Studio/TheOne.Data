@@ -8,6 +8,7 @@ namespace UniT.Data
     using System.Linq;
     using System.Reflection;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using Newtonsoft.Json.Serialization;
     using UniT.Extensions;
 
@@ -20,6 +21,10 @@ namespace UniT.Data
             ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
             ObjectCreationHandling = ObjectCreationHandling.Replace,
             ContractResolver       = new WritablePropertyOnlyContractResolver(),
+            Converters = new List<JsonConverter>
+            {
+                new StringEnumConverter(),
+            },
         };
 
         private sealed class WritablePropertyOnlyContractResolver : DefaultContractResolver

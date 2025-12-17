@@ -46,7 +46,7 @@ namespace UniT.Data.Serialization
             return UniTask.FromResult(this.Serialize(data));
         }
 
-        public virtual UniTask DeserializeAsync<T>(TRawData rawData, CancellationToken cancellationToken = default) where T : TData
+        public virtual UniTask<T> DeserializeAsync<T>(TRawData rawData, CancellationToken cancellationToken = default) where T : TData
         {
             return this.DeserializeAsync(typeof(T), rawData, cancellationToken).ContinueWith(data => (T)data);
         }

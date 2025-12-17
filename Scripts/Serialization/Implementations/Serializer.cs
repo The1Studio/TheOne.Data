@@ -24,14 +24,14 @@ namespace UniT.Data.Serialization
 
         public abstract TRawData Serialize(TData data);
 
-        public T Deserialize<T>(TRawData rawData) where T : TData => (T)this.Deserialize(typeof(T), rawData);
+        public virtual T Deserialize<T>(TRawData rawData) where T : TData => (T)this.Deserialize(typeof(T), rawData);
 
         #if UNIT_UNITASK
         UniTask<object> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken) => this.DeserializeAsync(type, (TRawData)rawData, cancellationToken).ContinueWith(data => (object)data);
 
         UniTask<object> ISerializer.SerializeAsync(object data, CancellationToken cancellationToken) => this.SerializeAsync((TData)data, cancellationToken).ContinueWith(rawData => (object)rawData);
 
-        public virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken)
+        public virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken = default)
         {
             #if !UNITY_WEBGL
             return UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
@@ -40,9 +40,15 @@ namespace UniT.Data.Serialization
             #endif
         }
 
-        public virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken)
+        public virtual UniTask<TRawData> SerializeAsync(TData data, CancellationToken cancellationToken = default)
         {
+            // serialize collections is not thread safe
             return UniTask.FromResult(this.Serialize(data));
+        }
+
+        public virtual UniTask DeserializeAsync<T>(TRawData rawData, CancellationToken cancellationToken = default) where T : TData
+        {
+            return this.DeserializeAsync(typeof(T), rawData, cancellationToken).ContinueWith(data => (T)data);
         }
         #else
         IEnumerator ISerializer.DeserializeAsync(Type type, object rawData, Action<object> callback) => this.DeserializeAsync(type, (TRawData)rawData, data => callback(data));

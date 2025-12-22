@@ -59,7 +59,11 @@ namespace UniT.Data.Storage
         {
             this.logger.Warning("`GetFilePath` only use cached file. Use `GetFilePathAsync` to download new file from remote.");
             this.ValidateAndExtract();
-            return this.validated ? this.GetFilePath(name) : null;
+            if (!this.validated)
+            {
+                this.logger.Error("Failed to fetch version or download. Using cached data");
+            }
+            return this.GetFilePath(name);
         }
 
         private void ValidateAndExtract()
@@ -123,7 +127,7 @@ namespace UniT.Data.Storage
                     }
                     catch (Exception e)
                     {
-                        this.HandleNonCriticalException(e);
+                        this.logger.Exception(e);
                     }
                     #if !UNITY_WEBGL
                     await UniTask.RunOnThreadPool(this.ValidateAndExtract, cancellationToken: cancellationToken);
@@ -148,7 +152,7 @@ namespace UniT.Data.Storage
                     }
                     catch (Exception e)
                     {
-                        this.HandleNonCriticalException(e);
+                        this.logger.Exception(e);
                     }
                     #if !UNITY_WEBGL
                     await UniTask.RunOnThreadPool(this.ValidateAndExtract, cancellationToken: cancellationToken);
@@ -156,7 +160,11 @@ namespace UniT.Data.Storage
                     this.ValidateAndExtract();
                     #endif
                 }
-                return this.validated ? this.GetFilePath(name) : null;
+                if (!this.validated)
+                {
+                    this.logger.Error("Failed to fetch version or download. Using cached data");
+                }
+                return this.GetFilePath(name);
             }
             finally
             {
@@ -176,7 +184,7 @@ namespace UniT.Data.Storage
                         url: this.config.FetchVersionUrl,
                         callback: result => this.Version = result.Trim(),
                         cache: false
-                    ).Catch(this.HandleNonCriticalException);
+                    ).Catch(this.logger.Exception);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }
                 if (!this.validated && !this.Version.IsNullOrWhiteSpace())
@@ -185,10 +193,14 @@ namespace UniT.Data.Storage
                         url: this.config.GetDownloadUrl(this.Version),
                         savePath: this.ZipFilePath,
                         cache: false
-                    ).Catch(this.HandleNonCriticalException);
+                    ).Catch(this.logger.Exception);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }
-                callback(this.validated ? this.GetFilePath(name) : null);
+                if (!this.validated)
+                {
+                    this.logger.Error("Failed to fetch version or download. Using cached data");
+                }
+                callback(this.GetFilePath(name));
             }
             finally
             {
@@ -203,12 +215,6 @@ namespace UniT.Data.Storage
         {
             var path = $"{this.ExtractDirectory}/{name}";
             return File.Exists(path) ? path : null;
-        }
-
-        private void HandleNonCriticalException(Exception e)
-        {
-            this.logger.Exception(e);
-            this.logger.Error("Failed to fetch info or download. Using cached data");
         }
     }
 }

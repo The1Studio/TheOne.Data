@@ -20,6 +20,9 @@ namespace UniT.Data.Storage
 
     public sealed class ExternalFileVersionManager : IExternalFileVersionManager
     {
+        private static readonly string PERSISTENT_DATA_PATH = Application.persistentDataPath;
+        private static readonly string TEMPORARY_CACHE_PATH = Application.temporaryCachePath;
+
         private readonly IExternalFileVersionManagerConfig config;
         private readonly IExternalAssetsManager            externalAssetsManager;
         private readonly ILogger                           logger;
@@ -32,10 +35,8 @@ namespace UniT.Data.Storage
             this.logger                = loggerManager.GetLogger(this);
         }
 
-        private string ZipFilePath      => $"{Application.persistentDataPath}/{this.Version}";
-        private string ExtractDirectory => $"{Application.temporaryCachePath}/{this.Version}";
-
-        private string version = PlayerPrefs.GetString(nameof(ExternalFileVersionManager));
+        private string ZipFilePath      => $"{PERSISTENT_DATA_PATH}/{this.Version}";
+        private string ExtractDirectory => $"{TEMPORARY_CACHE_PATH}/{this.Version}";
 
         private string Version
         {
@@ -46,6 +47,8 @@ namespace UniT.Data.Storage
                 PlayerPrefs.Save();
             }
         }
+
+        private string version = PlayerPrefs.GetString(nameof(ExternalFileVersionManager));
 
         private bool validating;
         private bool validated;
@@ -79,7 +82,7 @@ namespace UniT.Data.Storage
             using var sha256  = SHA256.Create();
             using var zipFile = File.OpenRead(this.ZipFilePath);
             var       hash    = BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", "");
-            if (hash != this.Version)
+            if (!string.Equals(hash.Trim(), this.Version.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 this.logger.Error($"Hash mismatch. Expected: {this.Version}, Got: {hash}");
                 File.Delete(this.ZipFilePath);

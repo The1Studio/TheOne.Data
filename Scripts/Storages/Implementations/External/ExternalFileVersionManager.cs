@@ -82,7 +82,7 @@ namespace UniT.Data.Storage
             using var sha256  = SHA256.Create();
             using var zipFile = File.OpenRead(this.ZipFilePath);
             var       hash    = BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", "");
-            if (!string.Equals(hash.Trim(), this.Version.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(hash, this.Version, StringComparison.OrdinalIgnoreCase))
             {
                 this.logger.Error($"Hash mismatch. Expected: {this.Version}, Got: {hash}");
                 File.Delete(this.ZipFilePath);
@@ -111,11 +111,11 @@ namespace UniT.Data.Storage
                 {
                     try
                     {
-                        this.Version = await this.externalAssetsManager.DownloadTextAsync(
+                        this.Version = (await this.externalAssetsManager.DownloadTextAsync(
                             url: this.config.FetchVersionUrl,
                             cache: false,
                             cancellationToken: cancellationToken
-                        );
+                        )).Trim();
                     }
                     catch (OperationCanceledException)
                     {
@@ -174,7 +174,7 @@ namespace UniT.Data.Storage
                 {
                     yield return this.externalAssetsManager.DownloadTextAsync(
                         url: this.config.FetchVersionUrl,
-                        callback: result => this.Version = result,
+                        callback: result => this.Version = result.Trim(),
                         cache: false
                     ).Catch(this.HandleNonCriticalException);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);

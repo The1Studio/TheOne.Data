@@ -25,16 +25,16 @@ namespace UniT.Data.Storage
             this.assetsManager = assetsManager;
         }
 
-        protected override Object? Read(string key)
+        public override Object? Read(string key)
         {
             return this.assetsManager.Load<Object>(key);
         }
 
-        protected override void Write(string key, Object value)
+        public override void Write(string key, Object value)
         {
         }
 
-        protected override void Flush()
+        public override void Flush()
         {
             #if UNITY_EDITOR
             AssetDatabase.Refresh();
@@ -42,17 +42,17 @@ namespace UniT.Data.Storage
         }
 
         #if UNIT_UNITASK
-        protected override UniTask<Object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public override UniTask<Object?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.assetsManager.LoadAsync<Object>(key, progress, cancellationToken)!;
         }
 
-        protected override UniTask WriteAsync(string key, Object value, IProgress<float>? progress, CancellationToken cancellationToken)
+        public override UniTask WriteAsync(string key, Object value, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return UniTask.CompletedTask;
         }
 
-        protected override UniTask FlushAsync(IProgress<float>? progress, CancellationToken cancellationToken)
+        public override UniTask FlushAsync(IProgress<float>? progress, CancellationToken cancellationToken)
         {
             #if UNITY_EDITOR
             AssetDatabase.Refresh();
@@ -60,17 +60,17 @@ namespace UniT.Data.Storage
             return UniTask.CompletedTask;
         }
         #else
-        protected override IEnumerator ReadAsync(string key, Action<Object?> callback, IProgress<float>? progress)
+        public override IEnumerator ReadAsync(string key, Action<Object?> callback, IProgress<float>? progress)
         {
             return this.assetsManager.LoadAsync<Object>(key, callback, progress);
         }
 
-        protected override IEnumerator WriteAsync(string key, Object value, Action? callback, IProgress<float>? progress)
+        public override IEnumerator WriteAsync(string key, Object value, Action? callback, IProgress<float>? progress)
         {
             yield break;
         }
 
-        protected override IEnumerator FlushAsync(Action? callback, IProgress<float>? progress)
+        public override IEnumerator FlushAsync(Action? callback, IProgress<float>? progress)
         {
             #if UNITY_EDITOR
             AssetDatabase.Refresh();

@@ -21,7 +21,7 @@ namespace UniT.Data.Storage
 
         object? IDataStorage.Read(string key) => this.Read(key);
 
-        protected abstract TRawData? Read(string key);
+        public abstract TRawData? Read(string key);
 
         #endregion
 
@@ -30,11 +30,11 @@ namespace UniT.Data.Storage
         #if UNIT_UNITASK
         UniTask<object?> IDataStorage.ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken) => this.ReadAsync(key, progress, cancellationToken).ContinueWith(rawData => (object?)rawData);
 
-        protected abstract UniTask<TRawData?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken);
+        public abstract UniTask<TRawData?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken);
         #else
         IEnumerator IDataStorage.ReadAsync(string key, Action<object?> callback, IProgress<float>? progress) => this.ReadAsync(key, rawData => callback(rawData), progress);
 
-        protected abstract IEnumerator ReadAsync(string key, Action<TRawData?> callback, IProgress<float>? progress);
+        public abstract IEnumerator ReadAsync(string key, Action<TRawData?> callback, IProgress<float>? progress);
         #endif
 
         #endregion

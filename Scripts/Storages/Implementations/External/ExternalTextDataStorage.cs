@@ -22,18 +22,18 @@ namespace UniT.Data.Storage
             this.externalFileVersionManager = externalFileVersionManager;
         }
 
-        protected override string? Read(string key)
+        public override string? Read(string key)
         {
             return File.ReadAllText(this.externalFileVersionManager.GetFilePath(key));
         }
 
         #if UNIT_UNITASK
-        protected override async UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public override async UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return await File.ReadAllTextAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
         }
         #else
-        protected override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
+        public override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
         {
             return this.externalFileVersionManager.GetFilePathAsync(key, path => CoroutineRunner.Run(() => File.ReadAllText(path), callback));
         }

@@ -11,24 +11,22 @@ namespace UniT.Data.Storage.DI
         {
             container.BindAssetsManager();
 
-            container.BindInterfacesTo<AssetBinaryDataStorage>().AsSingle();
-            container.BindInterfacesTo<AssetTextDataStorage>().AsSingle();
-            container.BindInterfacesTo<AssetBlobDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetBinaryDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetTextDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<AssetBlobDataStorage>().AsSingle();
 
-            container.BindInterfacesTo<PlayerPrefsDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<PlayerPrefsDataStorage>().AsSingle();
         }
 
-        #if UNIT_JSON
         public static void BindExternalDataStorages(this DiContainer container)
         {
             container.BindExternalAssetsManager();
 
             container.BindInterfacesTo<ExternalFileVersionManager>().AsSingle();
 
-            container.BindInterfacesTo<ExternalBinaryDataStorage>().AsSingle();
-            container.BindInterfacesTo<ExternalTextDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<ExternalBinaryDataStorage>().AsSingle();
+            container.BindInterfacesAndSelfTo<ExternalTextDataStorage>().AsSingle();
         }
-        #endif
     }
 }
 #endif

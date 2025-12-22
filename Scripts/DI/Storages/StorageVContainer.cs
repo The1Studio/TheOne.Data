@@ -11,24 +11,22 @@ namespace UniT.Data.Storage.DI
         {
             builder.RegisterAssetsManager();
 
-            builder.Register<AssetBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<AssetTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<AssetBlobDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AssetBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            builder.Register<AssetTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            builder.Register<AssetBlobDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
-            builder.Register<PlayerPrefsDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PlayerPrefsDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
         }
 
-        #if UNIT_JSON
         public static void RegisterExternalDataStorages(this IContainerBuilder builder)
         {
             builder.RegisterExternalAssetsManager();
 
             builder.Register<ExternalFileVersionManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            builder.Register<ExternalBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<ExternalTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ExternalBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            builder.Register<ExternalTextDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
         }
-        #endif
     }
 }
 #endif

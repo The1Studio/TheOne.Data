@@ -15,27 +15,37 @@ namespace UniT.Data.Storage
     public sealed class ExternalBinaryDataStorage : DataStorage<byte[]>
     {
         private readonly IExternalFileVersionManager externalFileVersionManager;
+        private readonly AssetBinaryDataStorage      assetBinaryDataStorage;
 
         [Preserve]
-        public ExternalBinaryDataStorage(IExternalFileVersionManager externalFileVersionManager)
+        public ExternalBinaryDataStorage(IExternalFileVersionManager externalFileVersionManager, AssetBinaryDataStorage assetBinaryDataStorage)
         {
             this.externalFileVersionManager = externalFileVersionManager;
+            this.assetBinaryDataStorage     = assetBinaryDataStorage;
         }
 
-        protected override byte[]? Read(string key)
+        public override byte[]? Read(string key)
         {
-            return File.ReadAllBytes(this.externalFileVersionManager.GetFilePath(key));
+            return this.externalFileVersionManager.GetFilePath(key) is { } path
+                ? File.ReadAllBytes(path)
+                : this.assetBinaryDataStorage.Read(key);
         }
 
         #if UNIT_UNITASK
-        protected override async UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public override async UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return await File.ReadAllBytesAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
+            return await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken) is { } path
+                ? await File.ReadAllBytesAsync(path, cancellationToken)
+                : await this.assetBinaryDataStorage.ReadAsync(key, progress, cancellationToken);
         }
         #else
-        protected override IEnumerator ReadAsync(string key, Action<byte[]?> callback, IProgress<float>? progress)
+        public override IEnumerator ReadAsync(string key, Action<byte[]?> callback, IProgress<float>? progress)
         {
-            return this.externalFileVersionManager.GetFilePathAsync(key, path => CoroutineRunner.Run(() => File.ReadAllBytes(path), callback));
+            var path = default(string);
+            yield return this.externalFileVersionManager.GetFilePathAsync(key, result => path = result);
+            yield return path is { }
+                ? CoroutineRunner.Run(() => File.ReadAllBytes(path), callback)
+                : this.assetBinaryDataStorage.ReadAsync(key, callback, progress);
         }
         #endif
     }

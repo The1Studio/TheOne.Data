@@ -3,6 +3,7 @@ namespace UniT.Data.Storage
 {
     using System;
     using System.IO;
+    using UniT.Logging;
     using UnityEngine.Scripting;
     #if UNIT_UNITASK
     using System.Threading;
@@ -15,27 +16,51 @@ namespace UniT.Data.Storage
     public sealed class ExternalTextDataStorage : DataStorage<string>
     {
         private readonly IExternalFileVersionManager externalFileVersionManager;
+        private readonly AssetTextDataStorage      assetTextDataStorage;
+        private readonly ILogger                     logger;
 
         [Preserve]
-        public ExternalTextDataStorage(IExternalFileVersionManager externalFileVersionManager)
+        public ExternalTextDataStorage(IExternalFileVersionManager externalFileVersionManager, AssetTextDataStorage assetTextDataStorage, ILoggerManager loggerManager)
         {
             this.externalFileVersionManager = externalFileVersionManager;
+            this.assetTextDataStorage     = assetTextDataStorage;
+            this.logger                     = loggerManager.GetLogger(this);
         }
 
         public override string? Read(string key)
         {
-            return File.ReadAllText(this.externalFileVersionManager.GetFilePath(key));
+            var path = this.externalFileVersionManager.GetFilePath(key);
+            if (path is null)
+            {
+                this.logger.Warning($"{key} not found, fallback to local asset");
+                return this.assetTextDataStorage.Read(key);
+            }
+            return File.ReadAllText(path);
         }
 
         #if UNIT_UNITASK
         public override async UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return await File.ReadAllTextAsync(await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken), cancellationToken);
+            var path = await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken);
+            if (path is null)
+            {
+                this.logger.Warning($"{key} not found, fallback to local asset");
+                return await this.assetTextDataStorage.ReadAsync(key, progress, cancellationToken);
+            }
+            return await File.ReadAllTextAsync(path, cancellationToken);
         }
         #else
         public override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
         {
-            return this.externalFileVersionManager.GetFilePathAsync(key, path => CoroutineRunner.Run(() => File.ReadAllText(path), callback));
+            var path = default(string);
+            yield return this.externalFileVersionManager.GetFilePathAsync(key, result => path = result);
+            if (path is null)
+            {
+                this.logger.Warning($"{key} not found, fallback to local asset");
+                yield return this.assetTextDataStorage.ReadAsync(key, callback, progress);
+                yield break;
+            }
+            yield return File.ReadAllTextAsync(path).ToCoroutine(callback);
         }
         #endif
     }

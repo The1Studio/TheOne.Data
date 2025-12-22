@@ -32,15 +32,17 @@ namespace UniT.Data.Storage
             this.logger                = loggerManager.GetLogger(this);
         }
 
-        private static string ZipFilePath      => $"{Application.persistentDataPath}/{Version}";
-        private static string ExtractDirectory => $"{Application.temporaryCachePath}/{Version}";
+        private string ZipFilePath      => $"{Application.persistentDataPath}/{this.Version}";
+        private string ExtractDirectory => $"{Application.temporaryCachePath}/{this.Version}";
 
-        private static string Version
+        private string version = PlayerPrefs.GetString(nameof(ExternalFileVersionManager));
+
+        private string Version
         {
-            get => PlayerPrefs.GetString(nameof(ExternalFileVersionManager));
+            get => this.version;
             set
             {
-                PlayerPrefs.SetString(nameof(ExternalFileVersionManager), value);
+                PlayerPrefs.SetString(nameof(ExternalFileVersionManager), this.version = value);
                 PlayerPrefs.Save();
             }
         }
@@ -54,38 +56,38 @@ namespace UniT.Data.Storage
         {
             this.logger.Warning("`GetFilePath` only use cached file. Use `GetFilePathAsync` to download new file from remote.");
             this.ValidateAndExtract();
-            return this.validated ? GetFilePath(name) : null;
+            return this.validated ? this.GetFilePath(name) : null;
         }
 
         private void ValidateAndExtract()
         {
             if (this.validated) return;
-            this.logger.Debug($"Validating {Version}");
+            this.logger.Debug($"Validating {this.Version}");
 
-            if (Version.IsNullOrWhiteSpace())
+            if (this.Version.IsNullOrWhiteSpace())
             {
                 this.logger.Error("Version not set");
                 return;
             }
 
-            if (!File.Exists(ZipFilePath))
+            if (!File.Exists(this.ZipFilePath))
             {
-                this.logger.Error($"Zip file not found: {ZipFilePath}");
+                this.logger.Error($"Zip file not found: {this.ZipFilePath}");
                 return;
             }
 
             using var sha256  = SHA256.Create();
-            using var zipFile = File.OpenRead(ZipFilePath);
+            using var zipFile = File.OpenRead(this.ZipFilePath);
             var       hash    = BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", "");
-            if (hash != Version)
+            if (hash != this.Version)
             {
-                this.logger.Error($"Hash mismatch. Expected: {Version}, Got: {hash}");
-                File.Delete(ZipFilePath);
+                this.logger.Error($"Hash mismatch. Expected: {this.Version}, Got: {hash}");
+                File.Delete(this.ZipFilePath);
                 return;
             }
 
-            this.logger.Debug($"Extracting {ZipFilePath} to {ExtractDirectory}");
-            ZipFile.ExtractToDirectory(ZipFilePath, ExtractDirectory, true);
+            this.logger.Debug($"Extracting {this.ZipFilePath} to {this.ExtractDirectory}");
+            ZipFile.ExtractToDirectory(this.ZipFilePath, this.ExtractDirectory, true);
 
             this.logger.Debug("Validated");
             this.validated = true;
@@ -106,7 +108,7 @@ namespace UniT.Data.Storage
                 {
                     try
                     {
-                        Version = await this.externalAssetsManager.DownloadTextAsync(
+                        this.Version = await this.externalAssetsManager.DownloadTextAsync(
                             url: this.config.FetchVersionUrl,
                             cache: false,
                             cancellationToken: cancellationToken
@@ -131,8 +133,8 @@ namespace UniT.Data.Storage
                     try
                     {
                         await this.externalAssetsManager.DownloadFileAsync(
-                            url: this.config.GetDownloadUrl(Version),
-                            savePath: ZipFilePath,
+                            url: this.config.GetDownloadUrl(this.Version),
+                            savePath: this.ZipFilePath,
                             cache: false,
                             cancellationToken: cancellationToken
                         );
@@ -151,7 +153,7 @@ namespace UniT.Data.Storage
                     this.ValidateAndExtract();
                     #endif
                 }
-                return this.validated ? GetFilePath(name) : null;
+                return this.validated ? this.GetFilePath(name) : null;
             }
             finally
             {
@@ -169,7 +171,7 @@ namespace UniT.Data.Storage
                 {
                     yield return this.externalAssetsManager.DownloadTextAsync(
                         url: this.config.FetchVersionUrl,
-                        callback: result => Version = result,
+                        callback: result => this.Version = result,
                         cache: false
                     ).Catch(this.HandleNonCriticalException);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
@@ -177,13 +179,13 @@ namespace UniT.Data.Storage
                 if (!this.validated)
                 {
                     yield return this.externalAssetsManager.DownloadFileAsync(
-                        url: this.config.GetDownloadUrl(Version),
-                        savePath: ZipFilePath,
+                        url: this.config.GetDownloadUrl(this.Version),
+                        savePath: this.ZipFilePath,
                         cache: false
                     ).Catch(this.HandleNonCriticalException);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }
-                callback(this.validated ? GetFilePath(name) : null);
+                callback(this.validated ? this.GetFilePath(name) : null);
             }
             finally
             {
@@ -194,9 +196,9 @@ namespace UniT.Data.Storage
 
         #endregion
 
-        private static string? GetFilePath(string name)
+        private string? GetFilePath(string name)
         {
-            var path = $"{ExtractDirectory}/{name}";
+            var path = $"{this.ExtractDirectory}/{name}";
             return File.Exists(path) ? path : null;
         }
 

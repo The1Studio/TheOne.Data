@@ -128,7 +128,7 @@ namespace UniT.Data.Storage
                     this.ValidateAndExtract();
                     #endif
                 }
-                if (!this.validated)
+                if (!this.validated && !this.Version.IsNullOrWhiteSpace())
                 {
                     try
                     {
@@ -176,7 +176,7 @@ namespace UniT.Data.Storage
                     ).Catch(this.HandleNonCriticalException);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }
-                if (!this.validated)
+                if (!this.validated && !this.Version.IsNullOrWhiteSpace())
                 {
                     yield return this.externalAssetsManager.DownloadFileAsync(
                         url: this.config.GetDownloadUrl(this.Version),

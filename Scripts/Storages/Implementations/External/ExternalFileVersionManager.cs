@@ -4,10 +4,10 @@ namespace UniT.Data.Storage
     using System;
     using System.IO;
     using System.IO.Compression;
+    using System.Linq;
     using System.Security.Cryptography;
     using UniT.Extensions;
     using UniT.Logging;
-    using UniT.ResourceManagement;
     using UnityEngine;
     using UnityEngine.Scripting;
     using ILogger = UniT.Logging.ILogger;
@@ -24,15 +24,13 @@ namespace UniT.Data.Storage
         private static readonly string TEMPORARY_CACHE_PATH = Application.temporaryCachePath;
 
         private readonly IExternalFileVersionManagerConfig config;
-        private readonly IExternalAssetsManager            externalAssetsManager;
         private readonly ILogger                           logger;
 
         [Preserve]
-        public ExternalFileVersionManager(IExternalFileVersionManagerConfig config, IExternalAssetsManager externalAssetsManager, ILoggerManager loggerManager)
+        public ExternalFileVersionManager(IExternalFileVersionManagerConfig config, ILoggerManager loggerManager)
         {
-            this.config                = config;
-            this.externalAssetsManager = externalAssetsManager;
-            this.logger                = loggerManager.GetLogger(this);
+            this.config = config;
+            this.logger = loggerManager.GetLogger(this);
         }
 
         private string ZipFilePath      => $"{PERSISTENT_DATA_PATH}/{this.Version}";
@@ -105,21 +103,25 @@ namespace UniT.Data.Storage
         #region Async
 
         #if UNIT_UNITASK
-        async UniTask<string?> IExternalFileVersionManager.GetFilePathAsync(string name, CancellationToken cancellationToken)
+        async UniTask<string?> IExternalFileVersionManager.GetFilePathAsync(string name, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             if (this.validating) await UniTask.WaitUntil(this, @this => !@this.validating, cancellationToken: cancellationToken);
             this.validating = true;
             try
             {
+                var subProgresses = progress.CreateSubProgresses(2).ToArray();
                 if (!this.validated)
                 {
                     try
                     {
-                        this.Version = (await this.externalAssetsManager.DownloadTextAsync(
-                            url: this.config.FetchVersionUrl,
-                            cache: false,
+                        var version = await this.config.FetchVersionAsync(
+                            progress: subProgresses[0],
                             cancellationToken: cancellationToken
-                        )).Trim();
+                        );
+                        if (!version.IsNullOrWhiteSpace())
+                        {
+                            this.Version = version.Trim();
+                        }
                     }
                     catch (OperationCanceledException)
                     {
@@ -139,10 +141,10 @@ namespace UniT.Data.Storage
                 {
                     try
                     {
-                        await this.externalAssetsManager.DownloadFileAsync(
-                            url: this.config.GetDownloadUrl(this.Version),
+                        await this.config.DownloadFileAsync(
+                            version: this.Version,
                             savePath: this.ZipFilePath,
-                            cache: false,
+                            progress: subProgresses[1],
                             cancellationToken: cancellationToken
                         );
                     }
@@ -172,27 +174,32 @@ namespace UniT.Data.Storage
             }
         }
         #else
-        IEnumerator IExternalFileVersionManager.GetFilePathAsync(string name, Action<string?> callback)
+        IEnumerator IExternalFileVersionManager.GetFilePathAsync(string name, Action<string?> callback, IProgress<float>? progress)
         {
             if (this.validating) yield return new WaitUntil(() => !this.validating);
             this.validating = true;
             try
             {
+                var subProgresses = progress.CreateSubProgresses(2).ToArray();
                 if (!this.validated)
                 {
-                    yield return this.externalAssetsManager.DownloadTextAsync(
-                        url: this.config.FetchVersionUrl,
-                        callback: result => this.Version = result.Trim(),
-                        cache: false
+                    var version = default(string)!;
+                    yield return this.config.FetchVersionAsync(
+                        callback: result => version = result,
+                        progress: subProgresses[0]
                     ).Catch(this.logger.Exception);
+                    if (!version.IsNullOrWhiteSpace())
+                    {
+                        this.Version = version.Trim();
+                    }
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }
                 if (!this.validated && !this.Version.IsNullOrWhiteSpace())
                 {
-                    yield return this.externalAssetsManager.DownloadFileAsync(
-                        url: this.config.GetDownloadUrl(this.Version),
+                    yield return this.config.DownloadFileAsync(
+                        version: this.Version,
                         savePath: this.ZipFilePath,
-                        cache: false
+                        progress: subProgresses[1]
                     ).Catch(this.logger.Exception);
                     yield return CoroutineRunner.Run(this.ValidateAndExtract);
                 }

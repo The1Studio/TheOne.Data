@@ -3,6 +3,8 @@ namespace UniT.Data.Storage
 {
     using System;
     using System.IO;
+    using System.Linq;
+    using UniT.Extensions;
     using UniT.Logging;
     using UnityEngine.Scripting;
     #if UNIT_UNITASK
@@ -10,7 +12,6 @@ namespace UniT.Data.Storage
     using Cysharp.Threading.Tasks;
     #else
     using System.Collections;
-    using UniT.Extensions;
     #endif
 
     public sealed class ExternalBinaryDataStorage : DataStorage<byte[]>
@@ -41,23 +42,25 @@ namespace UniT.Data.Storage
         #if UNIT_UNITASK
         public override async UniTask<byte[]?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var path = await this.externalFileVersionManager.GetFilePathAsync(key, cancellationToken);
+            var subProgresses = progress.CreateSubProgresses(2).ToArray();
+            var path          = await this.externalFileVersionManager.GetFilePathAsync(key, subProgresses[0], cancellationToken);
             if (path is null)
             {
                 this.logger.Warning($"{key} not found, fallback to local asset");
-                return await this.assetBinaryDataStorage.ReadAsync(key, progress, cancellationToken);
+                return await this.assetBinaryDataStorage.ReadAsync(key, subProgresses[1], cancellationToken);
             }
             return await File.ReadAllBytesAsync(path, cancellationToken);
         }
         #else
         public override IEnumerator ReadAsync(string key, Action<byte[]?> callback, IProgress<float>? progress)
         {
-            var path = default(string);
-            yield return this.externalFileVersionManager.GetFilePathAsync(key, result => path = result);
+            var subProgresses = progress.CreateSubProgresses(2).ToArray();
+            var path          = default(string);
+            yield return this.externalFileVersionManager.GetFilePathAsync(key, result => path = result, subProgresses[0]);
             if (path is null)
             {
                 this.logger.Warning($"{key} not found, fallback to local asset");
-                yield return this.assetBinaryDataStorage.ReadAsync(key, callback, progress);
+                yield return this.assetBinaryDataStorage.ReadAsync(key, callback, subProgresses[1]);
                 yield break;
             }
             yield return File.ReadAllBytesAsync(path).ToCoroutine(callback);

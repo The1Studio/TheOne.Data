@@ -20,8 +20,6 @@ namespace UniT.Data.Storage.DI
 
         public static void RegisterExternalDataStorages(this IContainerBuilder builder)
         {
-            builder.RegisterExternalAssetsManager();
-
             builder.Register<ExternalFileVersionManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<ExternalBinaryDataStorage>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();

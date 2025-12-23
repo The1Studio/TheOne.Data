@@ -1,11 +1,11 @@
 ﻿#nullable enable
 namespace UniT.Data.Storage
 {
+    using System;
     #if UNIT_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
     #else
-    using System;
     using System.Collections;
     #endif
 
@@ -14,16 +14,22 @@ namespace UniT.Data.Storage
         public string? GetFilePath(string name);
 
         #if UNIT_UNITASK
-        public UniTask<string?> GetFilePathAsync(string name, CancellationToken cancellationToken = default);
+        public UniTask<string?> GetFilePathAsync(string name, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
         #else
-        public IEnumerator GetFilePathAsync(string name, Action<string?> callback);
+        public IEnumerator GetFilePathAsync(string name, Action<string?> callback, IProgress<float>? progress = null);
         #endif
     }
 
     public interface IExternalFileVersionManagerConfig
     {
-        public string FetchVersionUrl { get; }
+        #if UNIT_UNITASK
+        public UniTask<string> FetchVersionAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
-        public string GetDownloadUrl(string version);
+        public UniTask DownloadFileAsync(string version, string savePath, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
+        #else
+        public IEnumerator FetchVersionAsync(Action<string> callback, IProgress<float>? progress = null);
+
+        public IEnumerator DownloadFileAsync(string version, string savePath, Action? callback = null, IProgress<float>? progress = null);
+        #endif
     }
 }

@@ -71,13 +71,13 @@ namespace UniT.Data.Storage
 
             if (this.Version.IsNullOrWhiteSpace())
             {
-                this.logger.Error("Version not set");
+                this.logger.Warning("Version not set");
                 return;
             }
 
             if (!File.Exists(this.ZipFilePath))
             {
-                this.logger.Error($"Zip file not found: {this.ZipFilePath}");
+                this.logger.Warning($"Zip file not found: {this.ZipFilePath}");
                 return;
             }
 
@@ -86,7 +86,7 @@ namespace UniT.Data.Storage
             var       hash    = BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", "");
             if (!string.Equals(hash, this.Version, StringComparison.OrdinalIgnoreCase))
             {
-                this.logger.Error($"Hash mismatch. Expected: {this.Version}, Got: {hash}");
+                this.logger.Warning($"Hash mismatch. Expected: {this.Version}, Got: {hash}");
                 File.Delete(this.ZipFilePath);
                 return;
             }

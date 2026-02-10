@@ -11,6 +11,10 @@ namespace UniT.Data.Serialization.DI
     #if UNIT_CSV
     using CsvHelper.Configuration;
     #endif
+    #if UNIT_MEMORYPACK
+    using MemoryPack;
+    using MemoryPackSerializer = MemoryPackSerializer;
+    #endif
 
     public static class SerializationDI
     {
@@ -36,6 +40,14 @@ namespace UniT.Data.Serialization.DI
                 });
             }
             container.AddInterfacesAndSelf<CsvSerializer>();
+            #endif
+
+            #if UNIT_MEMORYPACK
+            if (!container.Contains<MemoryPackSerializerOptions>())
+            {
+                container.Add(MemoryPackSerializerOptions.Default);
+            }
+            container.AddInterfacesAndSelf<MemoryPackSerializer>();
             #endif
         }
     }

@@ -20,11 +20,11 @@ namespace UniT.Data.Conversion.DI
 
             if (!container.HasBinding<IFormatProvider>())
             {
-                container.Bind<IFormatProvider>().FromMethod(() => CultureInfo.InvariantCulture).AsSingle();
+                container.BindInstance<IFormatProvider>(CultureInfo.InvariantCulture);
             }
             if (!container.HasBinding<SeparatorConfig>())
             {
-                container.Bind<SeparatorConfig>().FromMethod(() => new SeparatorConfig()).AsSingle();
+                container.BindInstance(new SeparatorConfig());
             }
 
             #endregion
@@ -34,7 +34,7 @@ namespace UniT.Data.Conversion.DI
             #if UNIT_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
-                container.Bind<JsonSerializerSettings>().FromMethod(() => DefaultJsonSerializerSettings.Value).AsSingle();
+                container.BindInstance(DefaultJsonSerializerSettings.Value);
             }
             container.BindInterfacesTo<JsonConverter>().AsSingle();
             #endif

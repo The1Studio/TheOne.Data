@@ -20,11 +20,11 @@ namespace UniT.Data.Conversion.DI
 
             if (!builder.Exists(typeof(IFormatProvider), true))
             {
-                builder.Register<IFormatProvider>(_ => CultureInfo.InvariantCulture, Lifetime.Singleton);
+                builder.RegisterInstance<IFormatProvider>(CultureInfo.InvariantCulture);
             }
             if (!builder.Exists(typeof(SeparatorConfig)))
             {
-                builder.Register(_ => new SeparatorConfig(), Lifetime.Singleton);
+                builder.RegisterInstance(new SeparatorConfig());
             }
 
             #endregion
@@ -34,7 +34,7 @@ namespace UniT.Data.Conversion.DI
             #if UNIT_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
-                builder.Register(_ => DefaultJsonSerializerSettings.Value, Lifetime.Singleton);
+                builder.RegisterInstance(DefaultJsonSerializerSettings.Value);
             }
             builder.Register<JsonConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif

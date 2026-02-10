@@ -11,6 +11,10 @@ namespace UniT.Data.Serialization.DI
     #if UNIT_CSV
     using CsvHelper.Configuration;
     #endif
+    #if UNIT_MEMORYPACK
+    using MemoryPack;
+    using MemoryPackSerializer = MemoryPackSerializer;
+    #endif
 
     public static class SerializationVContainer
     {
@@ -19,7 +23,7 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_JSON
             if (!builder.Exists(typeof(JsonSerializerSettings)))
             {
-                builder.Register(_ => DefaultJsonSerializerSettings.Value, Lifetime.Singleton);
+                builder.RegisterInstance(DefaultJsonSerializerSettings.Value);
             }
             builder.Register<JsonSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
@@ -29,13 +33,21 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_CSV
             if (!builder.Exists(typeof(CsvConfiguration)))
             {
-                builder.Register(_ => new CsvConfiguration(CultureInfo.InvariantCulture)
+                builder.RegisterInstance(new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     MissingFieldFound     = null,
                     PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
-                }, Lifetime.Singleton);
+                });
             }
             builder.Register<CsvSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            #endif
+
+            #if UNIT_MEMORYPACK
+            if (!builder.Exists(typeof(MemoryPackSerializerOptions)))
+            {
+                builder.RegisterInstance(MemoryPackSerializerOptions.Default);
+            }
+            builder.Register<MemoryPackSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
         }
     }

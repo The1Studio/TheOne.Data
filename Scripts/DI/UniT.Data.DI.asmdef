@@ -34,6 +34,11 @@
       "name": "org.nuget.csvhelper",
       "expression": "",
       "define": "UNIT_CSV"
+    },
+    {
+      "name": "org.nuget.memorypack",
+      "expression": "",
+      "define": "UNIT_MEMORYPACK"
     }
   ]
 }

@@ -11,6 +11,10 @@ namespace UniT.Data.Serialization.DI
     #if UNIT_CSV
     using CsvHelper.Configuration;
     #endif
+    #if UNIT_MEMORYPACK
+    using MemoryPack;
+    using MemoryPackSerializer = MemoryPackSerializer;
+    #endif
 
     public static class SerializationZenject
     {
@@ -19,7 +23,7 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_JSON
             if (!container.HasBinding<JsonSerializerSettings>())
             {
-                container.Bind<JsonSerializerSettings>().FromMethod(() => DefaultJsonSerializerSettings.Value).AsSingle();
+                container.BindInstance(DefaultJsonSerializerSettings.Value);
             }
             container.BindInterfacesAndSelfTo<JsonSerializer>().AsSingle();
             #endif
@@ -29,13 +33,21 @@ namespace UniT.Data.Serialization.DI
             #if UNIT_CSV
             if (!container.HasBinding<CsvConfiguration>())
             {
-                container.Bind<CsvConfiguration>().FromMethod(() => new CsvConfiguration(CultureInfo.InvariantCulture)
+                container.BindInstance(new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     MissingFieldFound     = null,
                     PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
-                }).AsSingle();
+                });
             }
             container.BindInterfacesAndSelfTo<CsvSerializer>().AsSingle();
+            #endif
+
+            #if UNIT_MEMORYPACK
+            if (!container.HasBinding<MemoryPackSerializerOptions>())
+            {
+                container.BindInstance(MemoryPackSerializerOptions.Default);
+            }
+            container.BindInterfacesAndSelfTo<MemoryPackSerializer>().AsSingle();
             #endif
         }
     }

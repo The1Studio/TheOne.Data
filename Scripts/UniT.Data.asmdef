@@ -27,6 +27,11 @@
       "name": "org.nuget.memorypack",
       "expression": "",
       "define": "UNIT_MEMORYPACK"
+    },
+    {
+      "name": "org.nuget.messagepack",
+      "expression": "",
+      "define": "UNIT_MESSAGEPACK"
     }
   ]
 }

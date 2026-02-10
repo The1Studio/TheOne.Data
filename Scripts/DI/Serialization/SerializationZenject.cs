@@ -15,6 +15,10 @@ namespace UniT.Data.Serialization.DI
     using MemoryPack;
     using MemoryPackSerializer = MemoryPackSerializer;
     #endif
+    #if UNIT_MESSAGEPACK
+    using MessagePack;
+    using MessagePackSerializer = MessagePackSerializer;
+    #endif
 
     public static class SerializationZenject
     {
@@ -48,6 +52,14 @@ namespace UniT.Data.Serialization.DI
                 container.BindInstance(MemoryPackSerializerOptions.Default);
             }
             container.BindInterfacesAndSelfTo<MemoryPackSerializer>().AsSingle();
+            #endif
+
+            #if UNIT_MESSAGEPACK
+            if (!container.HasBinding<MessagePackSerializerOptions>())
+            {
+                container.BindInstance(MessagePackSerializerOptions.Standard);
+            }
+            container.BindInterfacesAndSelfTo<MessagePackSerializer>().AsSingle();
             #endif
         }
     }

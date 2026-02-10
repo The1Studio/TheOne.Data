@@ -15,6 +15,10 @@ namespace UniT.Data.Serialization.DI
     using MemoryPack;
     using MemoryPackSerializer = MemoryPackSerializer;
     #endif
+    #if UNIT_MESSAGEPACK
+    using MessagePack;
+    using MessagePackSerializer = MessagePackSerializer;
+    #endif
 
     public static class SerializationVContainer
     {
@@ -48,6 +52,14 @@ namespace UniT.Data.Serialization.DI
                 builder.RegisterInstance(MemoryPackSerializerOptions.Default);
             }
             builder.Register<MemoryPackSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            #endif
+
+            #if UNIT_MESSAGEPACK
+            if (!builder.Exists(typeof(MessagePackSerializerOptions)))
+            {
+                builder.RegisterInstance(MessagePackSerializerOptions.Standard);
+            }
+            builder.Register<MessagePackSerializer>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #endif
         }
     }
